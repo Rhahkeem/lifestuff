@@ -1,7 +1,10 @@
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::{Args, Parser, Subcommand};
+use std::fmt;
 use strum::Display;
+mod area;
+mod distance;
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 #[clap(
     author = "Me!",
     about = "Lifestyle library!",
@@ -9,120 +12,124 @@ use strum::Display;
     long_about = "Something Something Something Daaaarksiiiide"
 )]
 struct Cli {
-    #[clap(subcommand)]
+    #[arg(short, long, global=true, action=clap::ArgAction::SetTrue)]
+    verbose: bool,
+    #[command(subcommand)]
     command: Commands,
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, Display, Debug)]
 enum Commands {
-    /// Specify unit conversion option
+    /// Unit conversions
     Convert(Conversions),
 }
 
 #[derive(Debug, Args)]
 struct Conversions {
-    #[arg(value_enum)]
-    from: FromUnits,
-    value: f64,
-    #[clap(long, required = true)]
-    to: Vec<ToUnits>,
+    #[command(subcommand)]
+    convert_type: ConversionOption,
 }
 
-fn unit_conversions(from: &FromUnits, to: &ToUnits, val: &f64) -> f64 {
-    match &from {
-        FromUnits::Acres => match &to {
-            ToUnits::Acres => return val.to_owned(),
-            ToUnits::Inches => return val * 6272640.0,
-            ToUnits::Km => return val * 0.004047,
-            ToUnits::Metres => return val * 4046.856422,
-            ToUnits::Miles => return val / 640.0,
-            ToUnits::Sqft => return val * 43560.0,
-        },
-        FromUnits::Inches => match &to {
-            ToUnits::Acres => return val / 6272640.0,
-            ToUnits::Inches => val.to_owned(),
-            ToUnits::Km => return val * 0.00000000064516,
-            ToUnits::Metres => return val * 0.000645,
-            ToUnits::Miles => return val * 0.0000000002491,
-            ToUnits::Sqft => return val / 144.0,
-        },
-        FromUnits::Kilometres => match &to {
-            ToUnits::Acres => return val * 247.105381,
-            ToUnits::Inches => val * 1550003100.0062,
-            ToUnits::Km => return val.to_owned(),
-            ToUnits::Metres => return val * 1000000.0,
-            ToUnits::Miles => return val * 0.386102,
-            ToUnits::Sqft => return val * 10763910.41671,
-        },
-        FromUnits::Metres => match &to {
-            ToUnits::Acres => return val * 0.000247,
-            ToUnits::Inches => val * 1550003100.0062,
-            ToUnits::Km => return val / 1000000.0,
-            ToUnits::Metres => val.to_owned(),
-            ToUnits::Miles => return val / 0.0000003861,
-            ToUnits::Sqft => return val * 10.76391,
-        },
-        FromUnits::Miles => match &to {
-            ToUnits::Acres => return val * 640.0,
-            ToUnits::Inches => val * 4014489599.4792,
-            ToUnits::Km => return val * 2.589988,
-            ToUnits::Metres => val * 2589988.11,
-            ToUnits::Miles => return val.to_owned(),
-            ToUnits::Sqft => return val * 27878399.996383,
-        },
-        FromUnits::Sqft => match &to {
-            ToUnits::Acres => return val / 43560.0,
-            ToUnits::Inches => return val * 144.0,
-            ToUnits::Km => return val / 0.000000092903,
-            ToUnits::Metres => val * 0.092903,
-            ToUnits::Miles => return val / 0.00000003587,
-            ToUnits::Sqft => return val.to_owned(),
-        },
+#[derive(Debug, Display)]
+enum ConverstionType {
+    Area,
+    Distance,
+}
+
+#[derive(Subcommand, Debug)]
+enum ConversionOption {
+    /// Area Conversions
+    Area(AreaConversion),
+    /// Distance Conversions
+    Distance(DistanceConversion),
+}
+
+#[derive(Debug, Args)]
+struct AreaConversion {
+    #[arg(long, required = true)]
+    from: area::AreaUnits,
+    value: f64,
+    #[arg(long, required = true)]
+    to: Vec<area::AreaUnits>,
+}
+
+#[derive(Debug, Args)]
+struct DistanceConversion {
+    #[clap(long, required = true, display_order = 1)]
+    from: distance::DistanceUnits,
+    #[clap(display_order = 2)]
+    value: f64,
+    #[clap(long, required = true, display_order = 3)]
+    to: Vec<distance::DistanceUnits>,
+}
+
+#[repr(C)]
+union UnitUnion {
+    area: area::AreaUnits,
+    distance: distance::DistanceUnits,
+}
+
+impl fmt::Debug for UnitUnion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        unsafe {
+            write!(
+                f,
+                "UnitUnion elements Are: {}, and {}",
+                &self.area, &self.distance
+            )
+        }
     }
 }
 
-#[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum FromUnits {
-    /// Convert From Acres
-    Acres,
-    /// Convert From Square Inches
-    Inches,
-    /// Convert From Square Kilometres
-    Kilometres,
-    /// Convert From Square Metres
-    Metres,
-    /// Convert From Square Miles
-    Miles,
-    /// Convert From Square Feet
-    Sqft,
+fn unit_conversions(
+    from: &UnitUnion,
+    to: &UnitUnion,
+    val: &f64,
+    conversion_type: &ConverstionType,
+) -> f64 {
+    unsafe {
+        match conversion_type {
+            ConverstionType::Area => area::area_conversions(&from.area, &to.area, val),
+            ConverstionType::Distance => {
+                distance::distance_conversions(&from.distance, &to.distance, val)
+            }
+        }
+    }
 }
 
-#[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-enum ToUnits {
-    #[clap(action=clap::ArgAction::SetTrue, alias = "a")]
-    /// Convert To Acres
-    Acres,
-    #[clap(action=clap::ArgAction::SetTrue, aliases = ["i","in"])]
-    /// Convert To Square Inches
-    Inches,
-    #[clap(action=clap::ArgAction::SetTrue, alias = "kilometres")]
-    /// Convert To Square Kilometres
-    Km,
-    #[clap(action=clap::ArgAction::SetTrue, alias = "m")]
-    /// Convert To Square Metres
-    Metres,
-    #[clap(action=clap::ArgAction::SetTrue, alias = "mi")]
-    /// Convert To Square Miles
-    Miles,
-    #[clap(action=clap::ArgAction::SetTrue, aliases = ["squarefeet","s"])]
-    /// Convert To Square Feet
-    Sqft,
+fn format_output(
+    from_unit: &UnitUnion,
+    to_unit: &UnitUnion,
+    from_val: &f64,
+    to_val: &f64,
+    conversion_type: &ConverstionType,
+) -> String {
+    unsafe {
+        match conversion_type {
+            ConverstionType::Distance => format!(
+                "{from_val} {:?} = {to_val} {:?}",
+                from_unit.distance, to_unit.distance
+            ),
+            ConverstionType::Area => {
+                format!(
+                    "{from_val} {:?} = {to_val} {:?}",
+                    from_unit.area, to_unit.area
+                )
+            }
+        }
+    }
 }
 
-fn conversion_prep(from: &FromUnits, to: &Vec<ToUnits>, val: &f64) {
+fn conversion_prep(
+    from: &UnitUnion,
+    to: &Vec<UnitUnion>,
+    val: &f64,
+    conversion_type: &ConverstionType,
+) {
     for unit in to {
-        let conversion = unit_conversions(from, unit, val);
-        println!("{val} {from} = {conversion} {unit}");
+        let conversion = unit_conversions(from, unit, val, conversion_type);
+        let output = format_output(from, unit, val, &conversion, conversion_type);
+        println!("{output}");
     }
 }
 
@@ -130,7 +137,39 @@ fn main() {
     let cli = Cli::parse();
     match &cli.command {
         Commands::Convert(args) => {
-            conversion_prep(&args.from, &args.to, &args.value);
+            if cli.verbose {
+                println!("CLI Args: {:?}", cli);
+            }
+            match &args.convert_type {
+                ConversionOption::Area(conversion_option) => {
+                    conversion_prep(
+                        &UnitUnion {
+                            area: conversion_option.from,
+                        },
+                        &conversion_option
+                            .to
+                            .iter()
+                            .map(|unit| UnitUnion { area: *unit })
+                            .collect::<Vec<UnitUnion>>(),
+                        &conversion_option.value,
+                        &ConverstionType::Area,
+                    );
+                }
+                ConversionOption::Distance(conversion_option) => {
+                    conversion_prep(
+                        &UnitUnion {
+                            distance: conversion_option.from,
+                        },
+                        &conversion_option
+                            .to
+                            .iter()
+                            .map(|unit| UnitUnion { distance: *unit })
+                            .collect::<Vec<UnitUnion>>(),
+                        &conversion_option.value,
+                        &ConverstionType::Distance,
+                    );
+                }
+            }
         }
     }
 }
