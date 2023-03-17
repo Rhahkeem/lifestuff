@@ -2,6 +2,7 @@ use clap::{Args, Parser, Subcommand};
 use std::fmt;
 use strum::Display;
 mod area;
+mod dateinfo;
 mod distance;
 
 #[derive(Parser, Debug)]
@@ -21,7 +22,15 @@ struct Cli {
 #[derive(Subcommand, Display, Debug)]
 enum Commands {
     /// Unit conversions
-    Convert(Conversions),
+    Conversion(Conversions),
+    /// Date Operations
+    Dates(DateOperations),
+}
+
+#[derive(Args, Debug)]
+struct DateOperations {
+    #[command(subcommand)]
+    operation_type: DateOption,
 }
 
 #[derive(Debug, Args)]
@@ -34,6 +43,14 @@ struct Conversions {
 enum ConverstionType {
     Area,
     Distance,
+}
+
+#[derive(Subcommand, Debug)]
+enum DateOption {
+    ///Add two dates or time periods together
+    Add(AreaConversion),
+    ///Diff Two Dates
+    Diff(dateinfo::Diff),
 }
 
 #[derive(Subcommand, Debug)]
@@ -136,7 +153,7 @@ fn conversion_prep(
 fn main() {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Convert(args) => {
+        Commands::Conversion(args) => {
             if cli.verbose {
                 println!("CLI Args: {:?}", cli);
             }
@@ -171,6 +188,15 @@ fn main() {
                 }
             }
         }
+        Commands::Dates(args) => match &args.operation_type {
+            DateOption::Diff(diff_args) => {
+                println!("{:?}", diff_args)
+            }
+            DateOption::Add(add_args) => {
+                println!("{:?}", add_args)
+            }
+        },
+        _ => todo!("Not done "),
     }
 }
 
