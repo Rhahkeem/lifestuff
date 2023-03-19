@@ -152,9 +152,10 @@ fn conversion_prep(
 
 fn main() {
     let cli = Cli::parse();
+    let verbose = cli.verbose;
     match &cli.command {
         Commands::Conversion(args) => {
-            if cli.verbose {
+            if verbose {
                 println!("CLI Args: {:?}", cli);
             }
             match &args.convert_type {
@@ -190,7 +191,8 @@ fn main() {
         }
         Commands::Dates(args) => match &args.operation_type {
             DateOption::Diff(diff_args) => {
-                println!("{:?}", diff_args)
+                println!("{:?}", diff_args);
+                dateinfo::do_diff_date(diff_args, verbose);
             }
             DateOption::Add(add_args) => {
                 println!("{:?}", add_args)
