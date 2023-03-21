@@ -1,5 +1,15 @@
-use clap::{Subcommand, ValueEnum};
+use clap::{Args, Subcommand, ValueEnum};
 use strum::Display;
+
+#[derive(Debug, Args)]
+pub struct DistanceConversion {
+    #[clap(long, required = true, display_order = 1)]
+    pub from: DistanceUnits,
+    #[clap(display_order = 2)]
+    pub value: f64,
+    #[clap(long, required = true, display_order = 3)]
+    pub to: Vec<DistanceUnits>,
+}
 
 #[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum DistanceUnits {

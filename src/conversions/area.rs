@@ -1,5 +1,14 @@
-use clap::{Subcommand, ValueEnum};
+use clap::{Args, Subcommand, ValueEnum};
 use strum::Display;
+
+#[derive(Debug, Args)]
+pub struct AreaConversion {
+    #[arg(long, required = true)]
+    pub from: AreaUnits,
+    pub value: f64,
+    #[arg(long, required = true)]
+    pub to: Vec<AreaUnits>,
+}
 
 #[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum AreaUnits {

@@ -4,7 +4,7 @@ use strum::Display;
 use time::{format_description, Date, Duration, OffsetDateTime};
 
 #[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum DateDuration {
+enum DateDuration {
     #[clap(action=clap::ArgAction::SetTrue)]
     Weeks,
     #[clap(action=clap::ArgAction::SetTrue)]
@@ -16,12 +16,12 @@ pub enum DateDuration {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct DateTimeKeeper {
-    pub initial_utc: OffsetDateTime,
+struct DateTimeKeeper {
+    initial_utc: OffsetDateTime,
 }
 
 #[derive(Debug, Args, Clone)]
-pub struct Diff {
+struct Diff {
     #[clap(help = "Date to perform diff operations on")]
     date1: String,
 
@@ -157,7 +157,7 @@ fn set_initial_date_argument(input_date: Option<&str>, verbose: bool) -> DateTim
     }
 }
 
-pub fn do_diff_date(diff_args: &Diff, verbose: bool) {
+fn do_diff_date(diff_args: &Diff, verbose: bool) {
     let first_date = set_initial_date_argument(Some(&diff_args.date1), verbose);
     let second_date = set_initial_date_argument(diff_args.date2.as_deref(), verbose);
     if verbose {
@@ -177,5 +177,29 @@ pub fn do_diff_date(diff_args: &Diff, verbose: bool) {
         };
 
         println!("{output}");
+    }
+}
+
+#[derive(Args, Debug)]
+pub struct DateOperations {
+    #[command(subcommand)]
+    operation_type: DateOption,
+}
+
+#[derive(Subcommand, Debug)]
+enum DateOption {
+    ///Add two dates or time periods together
+    // Add(conversions::AreaConversion),
+    ///Diff Two Dates
+    Diff(Diff),
+}
+
+pub fn handle_date_operations(date_args: &DateOperations, verbose: bool) {
+    match &date_args.operation_type {
+        DateOption::Diff(diff_args) => {
+            do_diff_date(diff_args, verbose);
+        } // DateOption::Add(add_args) => {
+          //     println!("{:?}", add_args)
+          // }
     }
 }
