@@ -1,16 +1,13 @@
 use clap::{Parser, Subcommand};
 use strum::Display;
 mod conversions;
-// use area::*;
-// use conversions::area::*;
-// use conversions::distance::*;
 mod dateinfo;
 
 #[derive(Parser, Debug)]
 #[clap(
     author = "Me!",
     about = "Lifestyle library!",
-    version = "0.1.0",
+    version = "0.2.0",
     long_about = "Something Something Something Daaaarksiiiide"
 )]
 struct Cli {
