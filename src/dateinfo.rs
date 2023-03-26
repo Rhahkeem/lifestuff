@@ -1,7 +1,7 @@
 use clap::{Args, Subcommand, ValueEnum};
 use std::ops::Sub;
 use strum::Display;
-use time::{format_description, Date, Duration, OffsetDateTime};
+use time::{format_description, Date, Duration, Month, OffsetDateTime};
 
 #[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 enum DateDuration {
@@ -29,6 +29,26 @@ struct Diff {
     date2: Option<String>,
     #[clap(long, required = true, display_order = 3)]
     to: Vec<DateDuration>,
+}
+
+#[derive(Debug, Args, Clone)]
+struct Add {
+    #[clap(help = "Date to add time period to")]
+    date: String,
+    val: i64,
+    #[clap(help = "Time period to add to date", required = true)]
+    period: TimePeriod,
+}
+
+#[derive(Debug, ValueEnum, Clone)]
+enum TimePeriod {
+    Years,
+    Months,
+    Weeks,
+    Days,
+    Hours,
+    Minutes,
+    Seconds,
 }
 
 fn do_output_format(breakdown: i64, duration: &str) -> String {
@@ -139,7 +159,7 @@ fn parse_input_date(input: &str, verbose: bool) -> Result<(i32, u8, u8), &'stati
     return Err("Error handling year parsing");
 }
 
-fn set_initial_date_argument(input_date: Option<&str>, verbose: bool) -> DateTimeKeeper {
+fn get_date_fromt_string_arg(input_date: Option<&str>, verbose: bool) -> DateTimeKeeper {
     if input_date.is_some() {
         let parsed_date = parse_input_date(input_date.unwrap(), verbose);
         if parsed_date.is_ok() {
@@ -158,8 +178,8 @@ fn set_initial_date_argument(input_date: Option<&str>, verbose: bool) -> DateTim
 }
 
 fn do_diff_date(diff_args: &Diff, verbose: bool) {
-    let first_date = set_initial_date_argument(Some(&diff_args.date1), verbose);
-    let second_date = set_initial_date_argument(diff_args.date2.as_deref(), verbose);
+    let first_date = get_date_fromt_string_arg(Some(&diff_args.date1), verbose);
+    let second_date = get_date_fromt_string_arg(diff_args.date2.as_deref(), verbose);
     if verbose {
         println!(
             "Doing a date diff with {:?} and {:?}",
@@ -188,18 +208,64 @@ pub struct DateOperations {
 
 #[derive(Subcommand, Debug)]
 enum DateOption {
-    ///Add two dates or time periods together
-    // Add(conversions::AreaConversion),
+    ///Add a time period to a given date
+    Add(Add),
     ///Diff Two Dates
     Diff(Diff),
 }
 
+fn update_years(in_date: &OffsetDateTime, years: i32) -> OffsetDateTime {
+    in_date
+        .replace_year(in_date.year() + years)
+        .unwrap_or(OffsetDateTime::now_utc())
+}
+
+fn update_months(in_date: &OffsetDateTime, months: i32) -> OffsetDateTime {
+    let mut whole_years = months / 12;
+    let leftovers = (months % 12) as u8;
+    let current_month = u8::from(in_date.month());
+    let month_idx = if current_month + leftovers > 12 {
+        whole_years += 1;
+        leftovers - (12 - current_month)
+    } else {
+        current_month + leftovers
+    };
+
+    update_years(in_date, whole_years)
+        .replace_month(Month::try_from(month_idx).unwrap())
+        .unwrap_or(OffsetDateTime::now_utc())
+}
+
+fn do_add_date(add_args: &Add, verbose: bool) {
+    if verbose {
+        println!("{:?}", add_args)
+    }
+
+    let mut in_date = get_date_fromt_string_arg(Some(&add_args.date), verbose);
+
+    in_date.initial_utc = match &add_args.period {
+        TimePeriod::Years => update_years(&in_date.initial_utc, add_args.val as i32),
+        TimePeriod::Months => update_months(&in_date.initial_utc, add_args.val as i32),
+        TimePeriod::Weeks => in_date.initial_utc + Duration::weeks(add_args.val),
+        TimePeriod::Days => in_date.initial_utc + Duration::days(add_args.val),
+        TimePeriod::Hours => in_date.initial_utc + Duration::hours(add_args.val),
+        TimePeriod::Minutes => in_date.initial_utc + Duration::minutes(add_args.val),
+        TimePeriod::Seconds => in_date.initial_utc + Duration::seconds(add_args.val),
+    };
+
+    let (hour, minute, second) = in_date.initial_utc.to_hms();
+    println!(
+        "{:?} ({hour}:{minute}:{second})",
+        in_date.initial_utc.to_calendar_date()
+    )
+}
 pub fn handle_date_operations(date_args: &DateOperations, verbose: bool) {
     match &date_args.operation_type {
         DateOption::Diff(diff_args) => {
             do_diff_date(diff_args, verbose);
-        } // DateOption::Add(add_args) => {
-          //     println!("{:?}", add_args)
-          // }
+        }
+        DateOption::Add(add_args) => {
+            do_add_date(add_args, verbose);
+        }
     }
 }
