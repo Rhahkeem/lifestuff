@@ -51,9 +51,13 @@ pub fn do_add_date(add_args: &Add, verbose: bool) {
     };
 
     let (hour, minute, second) = in_date.initial_utc.to_hms();
+
     println!(
-        "{:?} ({hour}:{minute}:{second})",
-        in_date.initial_utc.to_calendar_date()
+        "{:?} ({:0>2}:{:0>2}:{:0>2})",
+        in_date.initial_utc.to_calendar_date(),
+        hour,
+        minute,
+        second
     )
 }
 

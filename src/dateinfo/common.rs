@@ -1,65 +1,80 @@
 use std::ops::Sub;
-use time::{format_description, Date, Duration, OffsetDateTime};
+use time::{format_description, Date, Duration, OffsetDateTime, Time};
 
 #[derive(Debug, Clone, Copy)]
 pub struct DateTimeKeeper {
     pub initial_utc: OffsetDateTime,
+    // date: Date,
+    // time: Time,
 }
 
-fn parse_input_date(input: &str, verbose: bool) -> Result<(i32, u8, u8), &'static str> {
-    let parse_date_result = i32::from_str_radix(input, 10);
+fn parse_input_date(input: &str, verbose: bool) -> Result<(u32, u8, u8), &'static str> {
+    let parse_date_result = u32::from_str_radix(input, 10);
     if parse_date_result.is_ok() {
-        let foo = parse_date_result.as_ref().ok().unwrap();
+        let yyyymmdd = parse_date_result.as_ref().ok().unwrap();
         if verbose {
-            println!("Foo is now {}", foo);
+            println!("String parsed date is: {yyyymmdd}");
         }
-        return Ok((foo / 10000, ((foo / 100) % 100) as u8, (foo % 100) as u8));
+        if yyyymmdd < &10000000 {
+            return Err("Error parsing `yyyymmdd` date format");
+        }
+        return Ok((
+            yyyymmdd / 10000,
+            ((yyyymmdd / 100) % 100) as u8,
+            (yyyymmdd % 100) as u8,
+        ));
     }
-    if input.contains("-") || input.contains("/") {
-        let (tokens, year_idx, month_idx, date_idx) = match input.contains("-") {
-            true => (input.split("-").collect::<Vec<&str>>(), 0, 1, 2),
-            false => (input.split("/").collect::<Vec<&str>>(), 2, 1, 0),
-        };
-        if verbose {
-            println!("The tokens were {:?}", tokens);
-        }
-        if tokens.len() == 3 {
-            let year = i32::from_str_radix(tokens[year_idx], 10);
-            if year.is_err() {
-                return Err("Error handling year parsing");
-            }
-
-            if verbose {
-                println!("Year is {:?}", year);
-            }
-            let month = u8::from_str_radix(tokens[month_idx], 10);
-            if month.is_err() {
-                return Err("Error handling month parsing");
-            }
-            if verbose {
-                println!("Month is {:?}", month);
-            }
-            let date = u8::from_str_radix(tokens[date_idx], 10);
-            if date.is_err() {
-                //todo handle parse error
-                return Err("Error handling date parsing");
-            }
-            if verbose {
-                println!("Date is {:?}", date);
-            }
-            return Ok((
-                if year.as_ref().unwrap() < &100 {
-                    year.unwrap() + 2000
-                } else {
-                    year.unwrap()
-                },
-                month.unwrap(),
-                date.unwrap(),
-            ));
-        }
+    if !input.contains("-") && !input.contains("/") {
+        return Err("Error handling date parsing. Expected format dd/mm/yyyy or dd-mm-yyyy");
     }
 
-    return Err("Error handling year parsing");
+    let (tokens, year_idx, month_idx, date_idx) = match input.contains("-") {
+        true => (input.split("-").collect::<Vec<&str>>(), 2, 1, 0),
+        false => (input.split("/").collect::<Vec<&str>>(), 2, 1, 0),
+    };
+
+    if verbose {
+        println!("The tokens were {:?}", tokens);
+    }
+
+    if tokens.len() != 3 {
+        return Err("Error handling date parsing. Found less than 3 tokens to parse");
+    }
+
+    let year = u32::from_str_radix(tokens[year_idx], 10);
+    if year.is_err() {
+        return Err("Error handling year parsing");
+    }
+
+    if verbose {
+        println!("Year is {:?}", year);
+    }
+    let month = u8::from_str_radix(tokens[month_idx], 10);
+    if month.is_err() {
+        return Err("Error handling month parsing");
+    }
+    if month.as_ref().unwrap() > &12 {
+        return Err("Invalid month passed; (value > 12)");
+    }
+    if verbose {
+        println!("Month is {:?}", month);
+    }
+    let date = u8::from_str_radix(tokens[date_idx], 10);
+    if date.is_err() {
+        return Err("Error handling date parsing");
+    }
+    if verbose {
+        println!("Date is {:?}", date);
+    }
+    return Ok((
+        if year.as_ref().unwrap() < &100 {
+            year.unwrap() + 2000
+        } else {
+            year.unwrap()
+        },
+        month.unwrap(),
+        date.unwrap(),
+    ));
 }
 
 pub fn get_date_fromt_string_arg(input_date: Option<&str>, verbose: bool) -> DateTimeKeeper {
@@ -69,7 +84,7 @@ pub fn get_date_fromt_string_arg(input_date: Option<&str>, verbose: bool) -> Dat
             make_datekeeper(Some(parsed_date.unwrap()), verbose)
         } else {
             println!(
-                "Encountered an error parsing input date '{:?}'; Err:{:?}",
+                "Encountered an error parsing input date '{:?}'; Err: {:?}. Defulting to curent date instead.",
                 input_date.unwrap(),
                 parsed_date.err().unwrap()
             );
@@ -80,7 +95,8 @@ pub fn get_date_fromt_string_arg(input_date: Option<&str>, verbose: bool) -> Dat
     }
 }
 
-fn make_datekeeper(initial: Option<(i32, u8, u8)>, verbose: bool) -> DateTimeKeeper {
+fn make_datekeeper(initial: Option<(u32, u8, u8)>, verbose: bool) -> DateTimeKeeper {
+    let date_time_now = OffsetDateTime::now_utc();
     if initial.is_some() {
         let date_format = format_description::parse("[year]-[month]-[day]").unwrap();
         let the_date = format!(
@@ -93,13 +109,18 @@ fn make_datekeeper(initial: Option<(i32, u8, u8)>, verbose: bool) -> DateTimeKee
         if verbose {
             println!("The date is {:?}", the_date);
         }
+        let in_date = Date::parse(&the_date, &date_format).unwrap();
         DateTimeKeeper {
-            initial_utc: OffsetDateTime::now_utc()
-                .replace_date(Date::parse(&the_date, &date_format).unwrap()),
+            initial_utc: date_time_now
+                .replace_date(in_date)
+                .replace_time(Time::MIDNIGHT), // date: in_date,
+                                               // time: Time::MIDNIGHT,
         }
     } else {
         DateTimeKeeper {
-            initial_utc: OffsetDateTime::now_utc(),
+            initial_utc: date_time_now,
+            // date: date_time_now.date(),
+            // time: date_time_now.time(),
         }
     }
 }
