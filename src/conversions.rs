@@ -1,6 +1,5 @@
 use clap::{Args, Subcommand};
 use strum::Display;
-// use std::fmt;
 
 mod area;
 pub use area::*;
@@ -117,15 +116,3 @@ pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
         }
     }
 }
-
-// impl fmt::Debug for UnitUnion {
-//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//         unsafe {
-//             write!(
-//                 f,
-//                 "UnitUnion elements Are: {}, and {}",
-//                 &self.area, &self.distance
-//             )
-//         }
-//     }
-// }
