@@ -26,6 +26,10 @@ enum Commands {
 }
 
 fn main() {
+    // let (x, y, z) = (6, 600, 15);
+    // println!("{:02}:{:02}:{:02}", x, y, z);
+    // return;
+
     let cli = Cli::parse();
     let verbose = cli.verbose;
     if verbose {
