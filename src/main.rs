@@ -2,6 +2,7 @@ use clap::{Parser, Subcommand};
 use strum::Display;
 mod conversions;
 mod dateinfo;
+mod interest;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -23,13 +24,11 @@ enum Commands {
     Convert(conversions::Conversions),
     /// Date Operations
     Dates(dateinfo::DateOperations),
+    /// Interest Calculations
+    Interest(interest::Interest),
 }
 
 fn main() {
-    // let (x, y, z) = (6, 600, 15);
-    // println!("{:02}:{:02}:{:02}", x, y, z);
-    // return;
-
     let cli = Cli::parse();
     let verbose = cli.verbose;
     if verbose {
@@ -39,6 +38,8 @@ fn main() {
         Commands::Convert(args) => conversions::perform_conversion(args, verbose),
 
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
+
+        Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
     }
 }
 
