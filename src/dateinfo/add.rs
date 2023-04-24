@@ -1,4 +1,4 @@
-use crate::dateinfo::common;
+use crate::dateinfo;
 use clap::{Args, ValueEnum};
 use time::{Duration, Month, OffsetDateTime};
 
@@ -38,7 +38,7 @@ pub fn do_add_date(add_args: &Add, verbose: bool) {
         println!("{:?}", add_args)
     }
 
-    let mut in_date = common::get_date_fromt_string_arg(Some(&add_args.date), verbose);
+    let mut in_date = dateinfo::get_date_from_string_arg(Some(&add_args.date), verbose);
 
     in_date.initial_utc = match &add_args.period {
         TimePeriod::Years => update_years(&in_date.initial_utc, add_args.val as i32),

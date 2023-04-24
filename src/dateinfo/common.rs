@@ -77,7 +77,7 @@ fn parse_input_date(input: &str, verbose: bool) -> Result<(u32, u8, u8), &'stati
     ));
 }
 
-pub fn get_date_fromt_string_arg(input_date: Option<&str>, verbose: bool) -> DateTimeKeeper {
+pub fn get_date_from_string_arg(input_date: Option<&str>, verbose: bool) -> DateTimeKeeper {
     if input_date.is_some() {
         let parsed_date = parse_input_date(input_date.unwrap(), verbose);
         if parsed_date.is_ok() {
