@@ -35,7 +35,7 @@ enum ConverstionType {
 fn unit_conversions(
     from: &UnitUnion,
     to: &UnitUnion,
-    val: &f64,
+    val: f64,
     conversion_type: &ConverstionType,
 ) -> f64 {
     unsafe {
@@ -51,8 +51,8 @@ fn unit_conversions(
 fn format_conversion_output(
     from_unit: &UnitUnion,
     to_unit: &UnitUnion,
-    from_val: &f64,
-    to_val: &f64,
+    from_val: f64,
+    to_val: f64,
     conversion_type: &ConverstionType,
 ) -> String {
     unsafe {
@@ -74,12 +74,12 @@ fn format_conversion_output(
 fn conversion_prep(
     from: &UnitUnion,
     to: &Vec<UnitUnion>,
-    val: &f64,
+    val: f64,
     conversion_type: &ConverstionType,
 ) {
     for unit in to {
         let conversion = unit_conversions(from, unit, val, conversion_type);
-        let output = format_conversion_output(from, unit, val, &conversion, conversion_type);
+        let output = format_conversion_output(from, unit, val, conversion, conversion_type);
         println!("{output}");
     }
 }
@@ -96,7 +96,7 @@ pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
                     .iter()
                     .map(|unit| UnitUnion { area: *unit })
                     .collect::<Vec<UnitUnion>>(),
-                &conversion_option.value,
+                conversion_option.value,
                 &ConverstionType::Area,
             );
         }
@@ -110,7 +110,7 @@ pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
                     .iter()
                     .map(|unit| UnitUnion { distance: *unit })
                     .collect::<Vec<UnitUnion>>(),
-                &conversion_option.value,
+                conversion_option.value,
                 &ConverstionType::Distance,
             );
         }

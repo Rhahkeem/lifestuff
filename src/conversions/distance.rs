@@ -33,7 +33,7 @@ pub enum DistanceUnits {
     Yards,
 }
 
-pub fn distance_conversions(from: &DistanceUnits, to: &DistanceUnits, val: &f64) -> f64 {
+pub fn distance_conversions(from: &DistanceUnits, to: &DistanceUnits, val: f64) -> f64 {
     match &from {
         DistanceUnits::Yards => match &to {
             DistanceUnits::Yards => val.to_owned(),

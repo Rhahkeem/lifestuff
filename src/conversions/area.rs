@@ -32,7 +32,7 @@ pub enum AreaUnits {
     SquareFeet,
 }
 
-pub fn area_conversions(from: &AreaUnits, to: &AreaUnits, val: &f64) -> f64 {
+pub fn area_conversions(from: &AreaUnits, to: &AreaUnits, val: f64) -> f64 {
     match &from {
         AreaUnits::Acres => match &to {
             AreaUnits::Acres => val.to_owned(),
