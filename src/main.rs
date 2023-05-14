@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
+
 use strum::Display;
 mod conversions;
+mod currency;
 mod dateinfo;
 mod interest;
 
@@ -26,6 +28,8 @@ enum Commands {
     Dates(dateinfo::DateOperations),
     /// Interest Calculations
     Interest(interest::Interest),
+    /// Currency Convertsion Operations
+    Currency(currency::Currency),
 }
 
 fn main() {
@@ -40,7 +44,12 @@ fn main() {
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
 
         Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
+
+        Commands::Currency(args) => {
+            let x = currency::handle_currency_opertions(args, verbose);
+            if x.is_err() {
+                println!("{:?}", x);
+            }
+        }
     }
 }
-
-// compound interest
