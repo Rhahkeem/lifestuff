@@ -1,4 +1,5 @@
-use crate::dateinfo::{self, get_date_from_string_arg, DateTimeKeeper};
+use crate::dateinfo::{get_date_from_string_arg, DateTimeKeeper};
+use anyhow::{Ok, Result};
 use clap::Args;
 use time::{util, Date, Month};
 
@@ -54,32 +55,25 @@ pub struct Interest {
     )]
     end_date: String,
 }
-fn get_start_of_next_month(verbose: bool) -> dateinfo::DateTimeKeeper {
+fn get_start_of_next_month(verbose: bool) -> Result<DateTimeKeeper> {
     let target_date = get_date_from_string_arg(None, verbose);
-    let next_month = target_date.initial_utc.month().next();
+    let next_month = target_date.date().month().next();
 
     target_date
-        .initial_utc
-        .replace_day(1)
-        .unwrap()
-        .replace_month(next_month)
-        .unwrap();
-    target_date
+        .date()
+        .replace_day(1)?
+        .replace_month(next_month)?;
+    Ok(target_date)
 }
 
-fn get_end_of_mortgage_period(end_date: &str, verbose: bool) -> dateinfo::DateTimeKeeper {
+fn get_end_of_mortgage_period(end_date: &str, verbose: bool) -> Result<DateTimeKeeper> {
     let target_date = get_date_from_string_arg(Some(end_date), verbose);
-    let num_days_in_month = util::days_in_year_month(
-        target_date.initial_utc.year(),
-        target_date.initial_utc.month(),
-    );
+    let num_days_in_month =
+        util::days_in_year_month(target_date.date().year(), target_date.date().month());
 
-    target_date
-        .initial_utc
-        .replace_day(num_days_in_month)
-        .unwrap();
+    target_date.date().replace_day(num_days_in_month)?;
 
-    target_date
+    Ok(target_date)
 }
 
 fn is_first_of_month(date: &Date) -> bool {
@@ -89,13 +83,13 @@ fn is_first_of_month(date: &Date) -> bool {
 fn is_beginning_of_year(date: &Date) -> bool {
     date.month() == Month::January
 }
-pub fn handle_interest_calculations(interest_args: &Interest, verbose: bool) {
+pub fn handle_interest_calculations(interest_args: &Interest, verbose: bool) -> Result<()> {
     if verbose {
         println!("Interest Args: {:?}", interest_args);
     }
-    let mortgage_end_date = get_end_of_mortgage_period(&interest_args.end_date, verbose);
+    let mortgage_end_date = get_end_of_mortgage_period(&interest_args.end_date, verbose)?;
 
-    let mortgage_start_date = get_start_of_next_month(verbose);
+    let mortgage_start_date = get_start_of_next_month(verbose)?;
 
     calculate_interest_data_for_period(
         &mortgage_start_date,
@@ -107,6 +101,8 @@ pub fn handle_interest_calculations(interest_args: &Interest, verbose: bool) {
         interest_args.annual_downpayment,
         verbose,
     );
+
+    Ok(())
 }
 
 fn calculate_interest_data_for_period(
@@ -119,7 +115,7 @@ fn calculate_interest_data_for_period(
     annual_downpayment: Option<f32>,
     verbose: bool,
 ) {
-    let mut current_date = start_date.initial_utc.date();
+    let mut current_date = start_date.date();
     let tota_num_days = (*end_date - *start_date).abs().whole_days();
     let mut accrued_monthly_interest = 0.0;
     let mut is_leap_year = time::util::is_leap_year(current_date.year());

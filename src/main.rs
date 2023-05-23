@@ -43,7 +43,12 @@ fn main() {
 
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
 
-        Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
+        Commands::Interest(args) => {
+            let x = interest::handle_interest_calculations(args, verbose);
+            if x.is_err() {
+                println!("{:?}", x)
+            }
+        }
 
         Commands::Currency(args) => {
             let x = currency::handle_currency_opertions(args, verbose);
