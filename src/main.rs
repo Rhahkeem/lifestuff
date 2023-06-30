@@ -41,8 +41,12 @@ fn main() {
     match &cli.command {
         Commands::Convert(args) => conversions::perform_conversion(args, verbose),
 
-        Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
-
+        Commands::Dates(args) => {
+            let x = dateinfo::handle_date_operations(args, verbose);
+            if x.is_err() {
+                println!("{:?}", x)
+            }
+        }
         Commands::Interest(args) => {
             let x = interest::handle_interest_calculations(args, verbose);
             if x.is_err() {

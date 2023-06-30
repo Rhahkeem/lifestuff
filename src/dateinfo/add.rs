@@ -1,4 +1,5 @@
 use crate::dateinfo;
+use anyhow::Result;
 use clap::{Args, ValueEnum};
 use time::Duration;
 
@@ -11,33 +12,38 @@ pub struct Add {
     period: TimePeriod,
 }
 
-pub fn do_add_date(add_args: &Add, verbose: bool) {
+pub fn do_add_date(add_args: &Add, verbose: bool) -> Result<()> {
     if verbose {
         println!("{:?}", add_args)
     }
 
-    let mut in_date = dateinfo::get_date_from_string_arg(Some(&add_args.date), verbose);
+    let in_date = dateinfo::get_date_from_string_arg(Some(&add_args.date), verbose)?;
 
-    match &add_args.period {
-        TimePeriod::Years => in_date.update_years(add_args.val),
-        TimePeriod::Months => in_date.update_months(add_args.val),
-        TimePeriod::Weeks => in_date.update_weeks(add_args.val as i64),
-        TimePeriod::Days => in_date.update_days(add_args.val as i64),
-        TimePeriod::Hours => in_date += Duration::hours(add_args.val.into()),
-        TimePeriod::Minutes => in_date += Duration::minutes(add_args.val.into()),
-        TimePeriod::Seconds => in_date += Duration::seconds(add_args.val.into()),
+    let result_date = match &add_args.period {
+        TimePeriod::Years => in_date.apply_year_delta(add_args.val)?,
+        TimePeriod::Months => in_date.apply_month_delta(add_args.val)?,
+        TimePeriod::Weeks => in_date + Duration::weeks(add_args.val.into()),
+        TimePeriod::Days => in_date + Duration::days(add_args.val.into()),
+        TimePeriod::Hours => in_date + Duration::hours(add_args.val.into()),
+        TimePeriod::Minutes => in_date + Duration::minutes(add_args.val.into()),
+        TimePeriod::Seconds => in_date + Duration::seconds(add_args.val.into()),
     };
 
-    let (hour, minute, second) = in_date.time().as_hms();
+    let (hour, minute, second) = result_date.time().as_hms();
 
-    println!("{:?} ({:0>2}:{:0>2}:{:0>2})", in_date, hour, minute, second)
+    println!(
+        "{:?} ({:0>2}:{:0>2}:{:0>2})",
+        result_date, hour, minute, second
+    );
+
+    Ok(())
 }
 
 #[derive(Debug, ValueEnum, Clone)]
 enum TimePeriod {
     #[clap( aliases = ["y","yr","yrs"])]
     Years,
-    #[clap( aliases = ["m"])]
+    #[clap( aliases = ["m", "mon"])]
     Months,
     #[clap( aliases = ["w","wk","wks"])]
     Weeks,

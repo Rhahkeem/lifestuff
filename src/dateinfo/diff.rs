@@ -1,4 +1,5 @@
 use crate::dateinfo::common;
+use anyhow::Result;
 use clap::{Args, Subcommand, ValueEnum};
 use strum::Display;
 
@@ -34,9 +35,9 @@ fn do_output_format(breakdown: i64, duration: &str) -> String {
     format!("{breakdown} full {duration_display}")
 }
 
-pub fn do_diff_date(diff_args: &Diff, verbose: bool) {
-    let first_date = common::get_date_from_string_arg(Some(&diff_args.date1), verbose);
-    let second_date = common::get_date_from_string_arg(diff_args.date2.as_deref(), verbose);
+pub fn do_diff_date(diff_args: &Diff, verbose: bool) -> Result<()> {
+    let first_date = common::get_date_from_string_arg(Some(&diff_args.date1), verbose)?;
+    let second_date = common::get_date_from_string_arg(diff_args.date2.as_deref(), verbose)?;
     if verbose {
         println!(
             "Doing a date diff with {:?} and {:?}",
@@ -55,4 +56,6 @@ pub fn do_diff_date(diff_args: &Diff, verbose: bool) {
 
         println!("{output}");
     }
+
+    Ok(())
 }
