@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 use strum::Display;
@@ -32,33 +33,22 @@ enum Commands {
     Currency(currency::Currency),
 }
 
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
     let verbose = cli.verbose;
     if verbose {
         println!("CLI Args: {:?}", cli);
     }
     match &cli.command {
-        Commands::Convert(args) => conversions::perform_conversion(args, verbose),
-
-        Commands::Dates(args) => {
-            let x = dateinfo::handle_date_operations(args, verbose);
+        Commands::Convert(args) => {
+            let x = conversions::perform_conversion(args);
             if x.is_err() {
-                println!("{:?}", x)
+                println!("{:?}", x.as_ref().err());
             }
+            x
         }
-        Commands::Interest(args) => {
-            let x = interest::handle_interest_calculations(args, verbose);
-            if x.is_err() {
-                println!("{:?}", x)
-            }
-        }
-
-        Commands::Currency(args) => {
-            let x = currency::handle_currency_opertions(args, verbose);
-            if x.is_err() {
-                println!("{:?}", x);
-            }
-        }
+        Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
+        Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
+        Commands::Currency(args) => currency::handle_currency_opertions(args, verbose),
     }
 }
