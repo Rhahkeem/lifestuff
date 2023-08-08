@@ -1,3 +1,4 @@
+use anyhow::Result;
 use clap::{Args, Subcommand};
 use strum::Display;
 
@@ -84,7 +85,7 @@ fn conversion_prep(
     }
 }
 
-pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
+pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
     match &conversion_args.convert_type {
         ConversionOption::Area(conversion_option) => {
             conversion_prep(
@@ -99,6 +100,7 @@ pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
                 &conversion_option.value,
                 &ConverstionType::Area,
             );
+            Ok(())
         }
         ConversionOption::Distance(conversion_option) => {
             conversion_prep(
@@ -113,6 +115,7 @@ pub fn perform_conversion(conversion_args: &Conversions, _verbose: bool) {
                 &conversion_option.value,
                 &ConverstionType::Distance,
             );
+            Ok(())
         }
     }
 }
