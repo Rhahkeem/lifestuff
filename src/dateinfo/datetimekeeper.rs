@@ -2,6 +2,7 @@ use anyhow::{ensure, Context, Error, Result};
 use std::fmt;
 use std::ops::{Add, AddAssign, Sub};
 use time::macros::format_description;
+use time::util::days_in_year;
 use time::{Date, Duration, Month, OffsetDateTime, PrimitiveDateTime, Time};
 
 #[derive(Clone, Copy)]
@@ -409,6 +410,14 @@ impl DateTimeKeeper {
         let current_date = self.date();
         current_date.day()
             == time::util::days_in_year_month(current_date.year(), current_date.month())
+    }
+
+    pub fn days_left_in_year(&self) -> u16 {
+        days_in_year(self.date().year()) - self.date().ordinal()
+    }
+
+    pub fn days_passed_in_year(&self) -> u16 {
+        self.date().ordinal() - 1
     }
 }
 
