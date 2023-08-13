@@ -419,6 +419,10 @@ impl DateTimeKeeper {
     pub fn days_passed_in_year(&self) -> u16 {
         self.date().ordinal() - 1
     }
+
+    pub fn ordinal_week(&self) -> u8 {
+        self.date().iso_week()
+    }
 }
 
 #[cfg(test)]
