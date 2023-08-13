@@ -3,9 +3,8 @@ use clap::{Args, Subcommand};
 use strum::Display;
 
 mod area;
-pub use area::*;
 mod distance;
-pub use distance::*;
+
 
 #[derive(Debug, Args)]
 pub struct Conversions {
@@ -28,7 +27,7 @@ union UnitUnion {
 }
 
 #[derive(Debug, Display)]
-enum ConverstionType {
+enum ConversionType {
     Area,
     Distance,
 }
@@ -37,12 +36,12 @@ fn unit_conversions(
     from: &UnitUnion,
     to: &UnitUnion,
     val: &f64,
-    conversion_type: &ConverstionType,
+    conversion_type: &ConversionType,
 ) -> f64 {
     unsafe {
         match conversion_type {
-            ConverstionType::Area => area::area_conversions(&from.area, &to.area, val),
-            ConverstionType::Distance => {
+            ConversionType::Area => area::area_conversions(&from.area, &to.area, val),
+            ConversionType::Distance => {
                 distance::distance_conversions(&from.distance, &to.distance, val)
             }
         }
@@ -54,15 +53,15 @@ fn format_conversion_output(
     to_unit: &UnitUnion,
     from_val: &f64,
     to_val: &f64,
-    conversion_type: &ConverstionType,
+    conversion_type: &ConversionType,
 ) -> String {
     unsafe {
         match conversion_type {
-            ConverstionType::Distance => format!(
+            ConversionType::Distance => format!(
                 "{from_val} {:?} = {to_val} {:?}",
                 from_unit.distance, to_unit.distance
             ),
-            ConverstionType::Area => {
+            ConversionType::Area => {
                 format!(
                     "{from_val} {:?} = {to_val} {:?}",
                     from_unit.area, to_unit.area
@@ -76,7 +75,7 @@ fn conversion_prep(
     from: &UnitUnion,
     to: &Vec<UnitUnion>,
     val: &f64,
-    conversion_type: &ConverstionType,
+    conversion_type: &ConversionType,
 ) {
     for unit in to {
         let conversion = unit_conversions(from, unit, val, conversion_type);
@@ -98,7 +97,7 @@ pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
                     .map(|unit| UnitUnion { area: *unit })
                     .collect::<Vec<UnitUnion>>(),
                 &conversion_option.value,
-                &ConverstionType::Area,
+                &ConversionType::Area,
             );
             Ok(())
         }
@@ -113,7 +112,7 @@ pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
                     .map(|unit| UnitUnion { distance: *unit })
                     .collect::<Vec<UnitUnion>>(),
                 &conversion_option.value,
-                &ConverstionType::Distance,
+                &ConversionType::Distance,
             );
             Ok(())
         }
