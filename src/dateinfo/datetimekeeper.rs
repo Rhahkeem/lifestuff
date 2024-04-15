@@ -55,7 +55,7 @@ fn parse_input_date_dmy(input: &str, verbose: bool) -> Result<(u32, u8, u8), Err
     );
 
     let year = u32::from_str_radix(tokens[year_idx], 10).context(format!(
-        "Error handling year parsing. Couldn't convert '{}' to a number",
+        "Error handling year parsing. Could not convert '{}' to a number",
         tokens[year_idx]
     ))?;
 
@@ -64,7 +64,7 @@ fn parse_input_date_dmy(input: &str, verbose: bool) -> Result<(u32, u8, u8), Err
     }
 
     let month = u8::from_str_radix(tokens[month_idx], 10).context(format!(
-        "Error handling month parsing. Couldn't convert '{}' to a valid number",
+        "Error handling month parsing. Could not convert '{}' to a valid number",
         tokens[month_idx]
     ))?;
 
@@ -139,7 +139,7 @@ impl DateTimeKeeper {
         self.utc_date_time.date()
     }
 
-    pub fn time(&self) -> time::Time {
+    pub fn time(&self) -> Time {
         self.utc_date_time.time()
     }
 }
@@ -224,7 +224,7 @@ impl DateTimeKeeper {
         minute: Option<u8>,
         second: Option<u8>,
     ) -> Result<()> {
-        ensure!(hour.is_some() || minute.is_some() || second.is_some(), "Invalid options passsed for update time. Specify at least one of hour, minute or second");
+        ensure!(hour.is_some() || minute.is_some() || second.is_some(), "Invalid options passed for update time. Specify at least one of hour, minute or second");
 
         let interim = self
             .utc_date_time

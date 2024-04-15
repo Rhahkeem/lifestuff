@@ -5,7 +5,6 @@ use strum::Display;
 mod area;
 mod distance;
 
-
 #[derive(Debug, Args)]
 pub struct Conversions {
     #[command(subcommand)]

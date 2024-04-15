@@ -5,8 +5,8 @@ use time::Duration;
 
 #[derive(Debug, Args, Clone)]
 pub struct Add {
-    #[clap(help = "Date to add time period to")]
-    date: String,
+    #[clap(help = "Date to add time period to", long)]
+    date: Option<String>,
     val: i32,
     #[clap(help = "Time period to add to date", required = true)]
     period: TimePeriod,
@@ -14,10 +14,10 @@ pub struct Add {
 
 pub fn do_add_date(add_args: &Add, verbose: bool) -> Result<()> {
     if verbose {
-        println!("{:?}", add_args)
+        println!("Args were: {:?}", add_args)
     }
 
-    let in_date = dateinfo::get_date_from_string_arg(Some(&add_args.date), verbose)?;
+    let in_date = dateinfo::get_date_from_string_arg(add_args.date.as_deref(), verbose)?;
 
     let result_date = match &add_args.period {
         TimePeriod::Years => in_date.apply_year_delta(add_args.val)?,
