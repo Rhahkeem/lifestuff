@@ -1,8 +1,17 @@
 use anyhow::{ensure, Result};
 use clap::Args;
 use reqwest::StatusCode;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
 use std::time::Duration;
+
+#[allow(non_camel_case_types)]
+#[derive(Deserialize, Serialize, Debug)]
+enum ResponseMessage {
+    success { message: String, rate: f32 },
+    error { message: String },
+}
 
 ///Convert from one currency to another
 #[derive(Debug, Args, Clone)]
@@ -18,13 +27,13 @@ pub struct Currency {
     amt: f64,
     #[clap(short, long, help = "Currency to convert to")]
     to: Vec<String>,
-    // TODO add date for historical exchange info <-do this after datetimekeeper revamp
 }
 
-pub fn handle_currency_opertions(currency_args: &Currency, verbose: bool) -> Result<()> {
+pub fn handle_currency_operations(currency_args: &Currency, verbose: bool) -> Result<()> {
     ensure!(
         currency_args.from.len() == 3,
-        "Invalid currency passed you Jabroni!"
+        "Invalid currency \"{}\" passed you Jabroni!",
+        currency_args.from
     );
 
     ensure!(
@@ -37,15 +46,18 @@ pub fn handle_currency_opertions(currency_args: &Currency, verbose: bool) -> Res
         .https_only(true)
         .build()?;
 
-    let target_url = format!(
-        "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/{}.json",
-        currency_args.from.to_lowercase()
-    );
+    let target_url = "https://lifestuff.thejcbfamily.workers.dev/currency";
 
     if verbose {
         println!("target url = {target_url}");
     }
-    let response = client.get(target_url).send()?;
+
+    let mut json_body_map = HashMap::new();
+    json_body_map.insert("target", currency_args.from.to_uppercase());
+    json_body_map.insert("source", currency_args.to[0].to_uppercase());
+    json_body_map.insert("amount", currency_args.amt.to_string());
+
+    let response = client.post(target_url).json(&json_body_map).send()?;
 
     ensure!(
         response.status() == StatusCode::OK,
@@ -54,43 +66,30 @@ pub fn handle_currency_opertions(currency_args: &Currency, verbose: bool) -> Res
     );
 
     let response_body = response.text()?;
-    let json_response: Value = serde_json::from_str(&response_body)?;
-    let currency_map = json_response[currency_args.from.to_lowercase()]
-        .as_object()
-        .unwrap();
+    if verbose {
+        println!("So the response from the backend was {response_body}");
+    }
+    let json_response_type: ResponseMessage = serde_json::from_str(&response_body)?;
+
+    ensure!(
+        matches!(json_response_type, ResponseMessage::success { .. }),
+        "Got a bad response from currency API: {:?}",
+        json_response_type
+    );
 
     if verbose {
-        println!("{:#?}", currency_map);
+        println!("The response type was {:?}", json_response_type);
     }
 
-    let mut bad_currencies: Vec<&str> = Vec::new();
-    for currency in &currency_args.to {
-        let currency_data = currency_map.get(&currency.to_lowercase());
-        if currency_data.is_none() {
-            bad_currencies.push(currency);
-            continue;
-        }
-
-        let multiplier = currency_data.unwrap().as_f64().unwrap();
-
+    let json_response: Value = serde_json::from_str(&response_body)?;
+    let response_message = json_response["success"]["message"].as_str().unwrap();
+    let rate = json_response["success"]["rate"].as_f64().unwrap();
+    for currency_target in currency_args.to.iter() {
         println!(
-            "{}{} = {:.2}{}",
-            currency_args.amt,
-            currency_args.from.to_uppercase(),
-            (currency_args.amt * multiplier),
-            currency.to_uppercase()
+            "{:?} at a rate of 1 {} = {} {}",
+            response_message, currency_args.from, rate, currency_target
         );
     }
 
-    if !bad_currencies.is_empty() {
-        println!(
-            "Invalid currencies: {:#?}",
-            bad_currencies
-                .iter()
-                .map(|currency| currency.to_uppercase())
-                .collect::<Vec<_>>()
-                .join(",")
-        );
-    }
     Ok(())
 }
