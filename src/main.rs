@@ -6,6 +6,7 @@ mod conversions;
 mod currency;
 mod dateinfo;
 mod interest;
+mod mileage;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -29,8 +30,10 @@ enum Commands {
     Dates(dateinfo::DateOperations),
     /// Interest Calculations
     Interest(interest::Interest),
-    /// Currency Convertsion Operations
+    /// Currency Conversion Operations
     Currency(currency::Currency),
+    /// Mileage Calculations
+    Mileage(mileage::Mileage),
 }
 
 fn main() -> Result<()> {
@@ -39,16 +42,17 @@ fn main() -> Result<()> {
     if verbose {
         println!("CLI Args: {:?}", cli);
     }
-    match &cli.command {
-        Commands::Convert(args) => {
-            let x = conversions::perform_conversion(args);
-            if x.is_err() {
-                println!("{:?}", x.as_ref().err());
-            }
-            x
-        }
+    let da_answer = match &cli.command {
+        Commands::Convert(args) => conversions::perform_conversion(args),
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
         Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
-        Commands::Currency(args) => currency::handle_currency_opertions(args, verbose),
+        Commands::Currency(args) => currency::handle_currency_operations(args, verbose),
+        Commands::Mileage(args) => mileage::handle_mileage_operations(args, verbose),
+    };
+
+    if da_answer.is_err() {
+        println!("{}", da_answer.unwrap_err());
     }
+
+    Ok(())
 }
