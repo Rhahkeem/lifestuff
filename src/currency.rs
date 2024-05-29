@@ -53,8 +53,8 @@ pub fn handle_currency_operations(currency_args: &Currency, verbose: bool) -> Re
     }
 
     let mut json_body_map = HashMap::new();
-    json_body_map.insert("target", currency_args.from.to_uppercase());
-    json_body_map.insert("source", currency_args.to[0].to_uppercase());
+    json_body_map.insert("target", currency_args.to[0].to_uppercase());
+    json_body_map.insert("source", currency_args.from.to_uppercase());
     json_body_map.insert("amount", currency_args.amt.to_string());
 
     let response = client.post(target_url).json(&json_body_map).send()?;
