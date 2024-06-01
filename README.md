@@ -18,14 +18,12 @@ Something Something Something Daaaarksiiiide
 Usage: lifestuff [OPTIONS] <COMMAND>
 
 Commands:
-  convert
-          Unit conversions
-  dates
-          Date Operations
-  interest
-          Interest Calculations
-  help
-          Print this message or the help of the given subcommand(s)
+  convert   Unit conversions
+  dates     Date Operations
+  interest  Interest Calculations
+  currency  Currency Conversion Operations
+  mileage   Mileage Calculations
+  help      Print this message or the help of the given subcommand(s)
 
 Options:
   -v, --verbose
@@ -36,7 +34,9 @@ Options:
 
   -V, --version
           Print version
+
 ```
+
 ### Unit Conversions
 
 This allows for conversion between different units :
@@ -54,7 +54,7 @@ Commands:
 Options:
   -v, --verbose
   -h, --help     Print help
-  ```
+```
 
 For example (as seen above) it can perform conversions between distance units, and area units.
 
@@ -75,12 +75,13 @@ Commands:
 Options:
   -v, --verbose
   -h, --help     Print help
-  ```
+```
 
 ### Interest
 
 Interest Calculations
 
+```
 Usage: lifestuff interest [OPTIONS] --principal <PRINCIPAL> --interest-rate <INTEREST_RATE> --repayment <REPAYMENT> --max-repayment-pct <MAX_REPAYMENT_PCT> --annual-downpayment <ANNUAL_DOWNPAYMENT> --end-date <END_DATE>
 
 Options:
@@ -100,3 +101,34 @@ Options:
           Mortgage calculation end date (dd/mm/yyyy)
   -h, --help
           Print help
+```
+
+### Currency
+
+```
+Currency Conversion Operations
+
+Usage: lifestuff currency [OPTIONS] --from <FROM> --amt <AMT>
+
+Options:
+  -f, --from <FROM>  Currency to convert from
+  -v, --verbose
+  -a, --amt <AMT>    Amount to convert
+  -t, --to <TO>      Currency to convert to
+  -h, --help         Print help
+
+```
+
+### Mileage
+
+```
+Mileage Calculations
+
+Usage: lifestuff mileage [OPTIONS] --mileage <MILEAGE>
+
+Options:
+  -m, --mileage <MILEAGE>  Current mileage of the vehicle
+  -v, --verbose
+  -h, --help               Print help
+
+```
