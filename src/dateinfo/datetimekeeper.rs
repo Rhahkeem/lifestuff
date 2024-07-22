@@ -292,7 +292,7 @@ impl DateTimeKeeper {
         let current_day = self.date().day();
         let current_year = self.date().year();
 
-        let is_last_day_of_month = if current_day >= 28 {
+        let is_currently_last_day_of_month = if current_day >= 28 {
             self.is_last_day_of_month()
         } else {
             false
@@ -303,7 +303,7 @@ impl DateTimeKeeper {
 
         let current_month = u8::from(self.utc_date_time.month());
 
-        let month_idx = if months_delta.is_positive() {
+        let new_month_idx = if months_delta.is_positive() {
             if current_month + leftovers > 12 {
                 whole_years += 1;
                 leftovers - (12 - current_month)
@@ -319,19 +319,21 @@ impl DateTimeKeeper {
             }
         };
 
-        let new_instance = if is_last_day_of_month {
-            let new_day =
-                get_last_day_of_proposed_month(current_year, time::Month::try_from(month_idx)?);
+        let last_day_of_proposed_month =
+            get_last_day_of_proposed_month(current_year, time::Month::try_from(new_month_idx)?);
 
-            self.apply_year_delta(whole_years)?
-                .utc_date_time
-                .replace_day(new_day)?
-                .replace_month(time::Month::try_from(month_idx)?)?
-        } else {
-            self.apply_year_delta(whole_years)?
-                .utc_date_time
-                .replace_month(time::Month::try_from(month_idx)?)?
-        };
+        let new_instance =
+            if is_currently_last_day_of_month &&   current_day > last_day_of_proposed_month {
+                self.apply_year_delta(whole_years)?
+                    .utc_date_time
+                    .replace_day(last_day_of_proposed_month)?
+                    .replace_month(time::Month::try_from(new_month_idx)?)?
+                    
+            } else {
+                self.apply_year_delta(whole_years)?
+                    .utc_date_time
+                    .replace_month(time::Month::try_from(new_month_idx)?)?
+            };
 
         Ok(Self {
             utc_date_time: new_instance,
