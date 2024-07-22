@@ -1,3 +1,5 @@
+mod tests;
+
 use crate::dateinfo::DateTimeKeeper;
 use anyhow::Result;
 use clap::Args;
