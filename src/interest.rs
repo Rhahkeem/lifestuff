@@ -1,5 +1,7 @@
+mod tests;
+
 use crate::dateinfo::{get_date_from_string_arg, DateTimeKeeper};
-use anyhow::{Ok, Result};
+use anyhow::{ensure, Ok, Result};
 use clap::Args;
 use time::{util, Date, Month};
 
@@ -87,6 +89,12 @@ pub fn handle_interest_calculations(interest_args: Interest, verbose: bool) -> R
     if verbose {
         println!("Interest Args: {:?}", interest_args);
     }
+
+    ensure!(
+        interest_args.principal > 0f32,
+        "Can only calculate interest on a positive principal. {0} was passed in",
+        interest_args.principal
+    );
     let mortgage_end_date = get_end_of_mortgage_period(&interest_args.end_date, verbose)?;
 
     let mortgage_start_date = get_start_of_next_month(verbose)?;
