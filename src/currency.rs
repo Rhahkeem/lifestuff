@@ -76,21 +76,14 @@ pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Res
     if verbose {
         println!("So the response from the backend was {response_body}");
     }
-    let json_response_type: ResponseMessage = serde_json::from_str(&response_body)?;
-
-    ensure!(
-        matches!(json_response_type, ResponseMessage::success { .. }),
-        "Got a bad response from currency API: {:?}",
-        json_response_type
-    );
-
-    if verbose {
-        println!("The response type was {:?}", json_response_type);
-    }
-
     let json_response: Value = serde_json::from_str(&response_body)?;
-    let response_message = json_response["success"]["message"].as_str().unwrap();
-    let rate = json_response["success"]["rate"].as_f64().unwrap();
+
+    // Check if the response contains the expected fields
+    let response_message = json_response["success"]["message"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("Missing 'message' in response"))?;
+    let rate = json_response["success"]["rate"].as_f64()
+        .ok_or_else(|| anyhow::anyhow!("Missing 'rate' in response"))? as f32;
+
     for currency_target in currency_args.to.iter() {
         println!(
             "{:?} at a rate of 1 {} = {} {}",
