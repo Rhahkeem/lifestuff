@@ -124,7 +124,7 @@ fn calculate_interest_data_for_period(
     verbose: bool,
 ) {
     let mut current_date = start_date.date();
-    let tota_num_days = (*end_date - *start_date).abs().whole_days();
+    let total_num_days = (*end_date - *start_date).abs().whole_days();
     let mut accrued_monthly_interest = 0.0;
     let mut is_leap_year = time::util::is_leap_year(current_date.year());
     let mut total_paid = 0.0;
@@ -132,7 +132,7 @@ fn calculate_interest_data_for_period(
 
     let using_interest = annual_downpayment.is_none();
 
-    for _ in 1..=tota_num_days {
+    for _ in 1..=total_num_days {
         match is_first_of_month(&current_date) {
             true => {
                 if verbose {
