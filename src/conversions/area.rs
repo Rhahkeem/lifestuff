@@ -60,7 +60,7 @@ pub fn area_conversions(from: &AreaUnits, to: &AreaUnits, val: &f64) -> f64 {
             AreaUnits::SquareFeet => val * 10763910.41671,
         },
         AreaUnits::SquareMetres => match &to {
-            AreaUnits::Acres => val * 0.000247,
+            AreaUnits::Acres => val * 0.0002471053814915898,
             AreaUnits::SqInches => val * 1550.0031000062,
             AreaUnits::SqKilometres => val / 1000000.0,
             AreaUnits::SquareMetres => val.to_owned(),
