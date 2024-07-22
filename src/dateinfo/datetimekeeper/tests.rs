@@ -386,8 +386,8 @@ mod tests {
             utc_date_time: Date::MAX.midnight().assume_utc(),
         };
         let max_result_negative_delta = max_tester.apply_month_delta(-1);
-        println!("{:?}", max_result_negative_delta);
-        // assert!(max_result_negative_delta.is_ok());
+
+        assert!(max_result_negative_delta.is_ok());
     }
     #[test]
     fn test_apply_negative_month_delta_min_date_err() {
@@ -405,13 +405,37 @@ mod tests {
         };
 
         let min_result_positive_delta = min_tester.apply_month_delta(1);
-        println!("{:?}", min_result_positive_delta);
+
         assert!(min_result_positive_delta.is_ok());
     }
-    // #[test]
-    // fn test_increment_month() {
-    //     let tester = DateTimeKeeper::new_from_yyyymmdd_str("20230131", true);
-    //     let result = tester.expect("REASON").next_month();
-    //     assert_eq!(result.unwrap().date(), date!(2023 - 02 - 01))
-    // }
+
+    // New tests from new_tests.rs
+    #[test]
+    fn test_apply_month_delta_february() {
+        let tester = DateTimeKeeper::new_from_dmy(28, 2, 2023).unwrap();
+        let result = tester.apply_month_delta(1).unwrap();
+        assert_eq!(result.date(), date!(2023 - 3 - 28));
+    }
+
+    #[test]
+    fn test_apply_month_delta_february_leap_year() {
+        let tester = DateTimeKeeper::new_from_dmy(29, 2, 2020).unwrap();
+        let result = tester.apply_month_delta(1);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().date(), date!(2020 - 3 - 29));
+    }
+
+    #[test]
+    fn test_apply_month_delta_february_non_leap_year() {
+        let tester = DateTimeKeeper::new_from_dmy(28, 2, 2021).unwrap();
+        let result = tester.apply_month_delta(1).unwrap();
+        assert_eq!(result.date(), date!(2021 - 3 - 28));
+    }
+
+    #[test]
+    fn test_apply_month_delta_back_to_previous_year() {
+        let tester = DateTimeKeeper::new_from_dmy(31, 1, 2023).unwrap();
+        let result = tester.apply_month_delta(-1).unwrap();
+        assert_eq!(result.date(), date!(2022 - 12 - 31));
+    }
 }
