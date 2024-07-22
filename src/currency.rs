@@ -1,4 +1,6 @@
 use anyhow::{ensure, Context, Result};
+mod tests;
+
 use clap::Args;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -56,7 +58,7 @@ pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Res
     let mut json_body_map = HashMap::new();
     json_body_map.insert("target", currency_args.to[0].to_uppercase());
     json_body_map.insert("source", currency_args.from.to_uppercase());
-    json_body_map.insert("amount", currency_args.amt.to_string());
+    json_body_map.insert("amount", currency_args.amt.abs().to_string());
 
     let response = client
         .post(target_url)
