@@ -3,6 +3,7 @@ use clap::{Args, Subcommand};
 use strum::Display;
 
 mod area;
+mod area_tests;
 mod distance;
 
 #[derive(Debug, Args)]
