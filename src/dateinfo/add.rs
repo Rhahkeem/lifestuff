@@ -39,6 +39,7 @@ pub fn do_add_date(add_args: &Add, verbose: bool) -> Result<()> {
     Ok(())
 }
 
+//noinspection SpellCheckingInspection
 #[derive(Debug, ValueEnum, Clone)]
 enum TimePeriod {
     #[clap( aliases = ["y","yr","yrs"])]
