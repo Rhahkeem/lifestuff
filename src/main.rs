@@ -34,6 +34,8 @@ enum Commands {
     Currency(currency::Currency),
     /// Mileage Calculations
     Mileage(mileage::Mileage),
+    /// DuckDuckGo Address
+    DdgAddress, // New CLI option added here
 }
 
 fn main() -> Result<()> {
@@ -48,6 +50,11 @@ fn main() -> Result<()> {
         Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
         Commands::Currency(args) => currency::handle_currency_operations(args, verbose),
         Commands::Mileage(args) => mileage::handle_mileage_operations(args, verbose),
+        Commands::DdgAddress => {
+            // Handle the ddg_address command here
+            println!("DuckDuckGo Address command executed.");
+            Ok(())
+        }
     };
 
     if da_answer.is_err() {
