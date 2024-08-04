@@ -18,8 +18,6 @@ mod mileage;
 struct Cli {
     #[arg(short, long, global=true, action=clap::ArgAction::SetTrue)]
     verbose: bool,
-    #[arg(long, help = "DuckDuckGo address for API calls")]
-    ddg_address: Option<String>,
     #[command(subcommand)]
     command: Commands,
 }
