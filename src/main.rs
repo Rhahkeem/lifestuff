@@ -1,10 +1,11 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-
 use strum::Display;
+
 mod conversions;
 mod currency;
 mod dateinfo;
+mod ddg;
 mod interest;
 mod mileage;
 
@@ -34,24 +35,27 @@ enum Commands {
     Currency(currency::Currency),
     /// Mileage Calculations
     Mileage(mileage::Mileage),
+    /// DuckDuckGo Address
+    DDG(ddg::DDGOperations),
 }
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
+    let cli: Cli = Cli::parse();
     let verbose = cli.verbose;
     if verbose {
         println!("CLI Args: {:?}", cli);
     }
-    let da_answer = match &cli.command {
+    let da_answer = match cli.command {
         Commands::Convert(args) => conversions::perform_conversion(args),
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
         Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
         Commands::Currency(args) => currency::handle_currency_operations(args, verbose),
         Commands::Mileage(args) => mileage::handle_mileage_operations(args, verbose),
+        Commands::DDG(args) => ddg::handle_ddg_operations(args, verbose),
     };
 
-    if da_answer.is_err() {
-        println!("{}", da_answer.unwrap_err());
+    if let Err(e) = da_answer {
+        println!("{e}");
     }
 
     Ok(())

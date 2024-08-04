@@ -38,7 +38,7 @@ pub struct Interest {
     )]
     max_repayment_pct: Option<u8>,
     #[clap(
-        help = "Max annual supplemntary downpayment ",
+        help = "Max annual supplementary downpayment ",
         short,
         conflicts_with = "max_repayment_pct",
         long,
@@ -83,7 +83,7 @@ fn is_first_of_month(date: &Date) -> bool {
 fn is_beginning_of_year(date: &Date) -> bool {
     date.month() == Month::January
 }
-pub fn handle_interest_calculations(interest_args: &Interest, verbose: bool) -> Result<()> {
+pub fn handle_interest_calculations(interest_args: Interest, verbose: bool) -> Result<()> {
     if verbose {
         println!("Interest Args: {:?}", interest_args);
     }
@@ -95,7 +95,7 @@ pub fn handle_interest_calculations(interest_args: &Interest, verbose: bool) -> 
         &mortgage_start_date,
         &mortgage_end_date,
         interest_args.repayment,
-        interest_args.interest_rate / 100 as f32,
+        interest_args.interest_rate / 100f32,
         interest_args.principal,
         interest_args.max_repayment_pct,
         interest_args.annual_downpayment,
@@ -174,6 +174,6 @@ fn calculate_interest_data_for_period(
 
     println!(
         "Current date is {:?}, Principal is now : {principal}, Total paid is {total_paid}. {:.2} paid in interest",
-        current_date, (total_paid- (original_principal - principal))
+        current_date, total_paid - (original_principal - principal)
     );
 }
