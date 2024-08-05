@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum CustomError {
+pub enum LifestyleError {
     #[error("An error occurred while parsing the date: {0}")]
     DateParseError(String),
 

@@ -1,5 +1,5 @@
 use crate::dateinfo;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Args, ValueEnum};
 use time::Duration;
 
@@ -17,11 +17,12 @@ pub fn do_add_date(add_args: &Add, verbose: bool) -> Result<()> {
         println!("Args were: {:?}", add_args)
     }
 
-    let in_date = dateinfo::get_date_from_string_arg(add_args.date.as_deref(), verbose)?;
+    let in_date = dateinfo::get_date_from_string_arg(add_args.date.as_deref(), verbose)
+        .context("Unable to parse string from date")?;
 
     let result_date = match &add_args.period {
-        TimePeriod::Years => in_date.apply_year_delta(add_args.val)?,
-        TimePeriod::Months => in_date.apply_month_delta(add_args.val)?,
+        TimePeriod::Years => in_date.apply_year_delta(add_args.val).context("Unable to apply year delta")?,
+        TimePeriod::Months => in_date.apply_month_delta(add_args.val).context("Unable to apply month delta")?,
         TimePeriod::Weeks => in_date + Duration::weeks(add_args.val.into()),
         TimePeriod::Days => in_date + Duration::days(add_args.val.into()),
         TimePeriod::Hours => in_date + Duration::hours(add_args.val.into()),

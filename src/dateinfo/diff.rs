@@ -1,7 +1,8 @@
 use crate::dateinfo::common;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Args, Subcommand, ValueEnum};
 use strum::Display;
+use crate::errors::LifestyleError;
 
 #[derive(Debug, Args, Clone)]
 pub struct Diff {
@@ -26,18 +27,19 @@ pub enum DateDuration {
 }
 
 fn do_output_format(breakdown: i64, duration: &str) -> String {
-    let duration_display = if breakdown == 1 {
-        duration.strip_suffix("s").unwrap()
-    } else {
-        duration
+    let duration_display = match breakdown {
+        1 => duration.strip_suffix("s").unwrap(),
+        _ => duration,
     };
 
     format!("{breakdown} full {duration_display}")
 }
 
-pub fn do_diff_date(diff_args: &Diff, verbose: bool) -> Result<()> {
-    let first_date = common::get_date_from_string_arg(Some(&diff_args.date1), verbose)?;
-    let second_date = common::get_date_from_string_arg(diff_args.date2.as_deref(), verbose)?;
+pub fn do_diff_date(diff_args: &Diff, verbose: bool) -> Result<(), LifestyleError> {
+    let first_date = common::get_date_from_string_arg(Some(&diff_args.date1), verbose)
+        .context("Unable to parse date from string arg")?;
+    let second_date = common::get_date_from_string_arg(diff_args.date2.as_deref(), verbose)
+        .context("Unable to parse date from string arg")?;
     if verbose {
         println!(
             "Doing a date diff with {:?} and {:?}",

@@ -5,6 +5,7 @@ use strum::Display;
 mod conversions;
 mod currency;
 mod dateinfo;
+mod errors;
 mod interest;
 mod mileage;
 
@@ -57,8 +58,8 @@ fn main() -> Result<()> {
         }
     };
 
-    if da_answer.is_err() {
-        println!("{}", da_answer.unwrap_err());
+    if let Err(e) = da_answer {
+        println!("{e}");
     }
 
     Ok(())

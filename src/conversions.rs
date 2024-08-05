@@ -1,3 +1,4 @@
+use crate::errors::LifestyleError;
 use anyhow::Result;
 use clap::{Args, Subcommand};
 use strum::Display;
@@ -72,18 +73,18 @@ fn format_conversion_output(
 
 fn conversion_prep(
     from: &UnitUnion,
-    to: &Vec<UnitUnion>,
+    to_units: &Vec<UnitUnion>,
     val: &f64,
     conversion_type: &ConversionType,
 ) {
-    for unit in to {
+    for unit in to_units {
         let conversion = unit_conversions(from, unit, val, conversion_type);
         let output = format_conversion_output(from, unit, val, &conversion, conversion_type);
         println!("{output}");
     }
 }
 
-pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
+pub fn perform_conversion(conversion_args: &Conversions) -> Result<(), LifestyleError> {
     match &conversion_args.convert_type {
         ConversionOption::Area(conversion_option) => {
             conversion_prep(
@@ -98,7 +99,6 @@ pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
                 &conversion_option.value,
                 &ConversionType::Area,
             );
-            Ok(())
         }
         ConversionOption::Distance(conversion_option) => {
             conversion_prep(
@@ -113,7 +113,7 @@ pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
                 &conversion_option.value,
                 &ConversionType::Distance,
             );
-            Ok(())
         }
     }
+    Ok(())
 }
