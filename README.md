@@ -23,11 +23,12 @@ Commands:
   interest  Interest Calculations
   currency  Currency Conversion Operations
   mileage   Mileage Calculations
+  ddg       DuckDuckGo Address
   help      Print this message or the help of the given subcommand(s)
 
 Options:
   -v, --verbose
-
+          
 
   -h, --help
           Print help (see a summary with '-h')
@@ -131,4 +132,21 @@ Options:
   -v, --verbose
   -h, --help               Print help
 
+```
+
+### DuckDuckGo (DDG)
+
+```
+DuckDuckGo Address
+
+Usage: lifestuff ddg [OPTIONS] <COMMAND>
+
+Commands:
+  generate  Generates a Duckduckgo email alias address
+  convert   Converts a regular email address to be used by Duckduckgo as a recipient
+  help      Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose  
+  -h, --help     Print help
 ```

@@ -49,7 +49,7 @@ pub struct DDGConvert {
 fn validate_email(email: &str) -> Result<String> {
     ensure!(
         is_valid_email_address(email),
-        "Invalid email address provided"
+        format!("Invalid email address: {:?} provided", email)
     );
     Ok(email.to_string())
 }
@@ -60,13 +60,7 @@ pub fn perform_address_conversion(
     target_url: &str,
     reqwest_client: Client,
 ) -> Result<()> {
-    ensure!(
-        is_valid_email_address(convert_args.recipient.as_str()),
-        format!(
-            "Invalid email address: {:?} provided",
-            convert_args.recipient
-        )
-    );
+    let recipient = validate_email(convert_args.recipient.as_str())?;
 
     let sender_address = if let Some(sender_address_arg) = &convert_args.sender {
         sender_address_arg.to_string()
@@ -82,13 +76,13 @@ pub fn perform_address_conversion(
 
     let final_address = format!(
         "{}_{}",
-        convert_args.recipient.replace("@", "_at_").trim(),
+        recipient.replace("@", "_at_").trim(),
         sender_address
     );
     println!(
         "Use {} to send to {} from {}",
         { final_address.bold().green() },
-        { convert_args.recipient.italic().bright_yellow() },
+        { recipient.italic().bright_yellow() },
         { sender_address.italic().bold().bright_cyan() }
     );
 
