@@ -1,4 +1,4 @@
-use anyhow::{ensure, Result};
+use anyhow::{ensure, Context, Result};
 use clap::Args;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
@@ -29,7 +29,7 @@ pub struct Currency {
     to: Vec<String>,
 }
 
-pub fn handle_currency_operations(currency_args: &Currency, verbose: bool) -> Result<()> {
+pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Result<()> {
     ensure!(
         currency_args.from.len() == 3,
         "Invalid currency \"{}\" passed you Jabroni!",
@@ -44,7 +44,8 @@ pub fn handle_currency_operations(currency_args: &Currency, verbose: bool) -> Re
     let client = reqwest::blocking::Client::builder()
         .timeout(Duration::from_secs(5))
         .https_only(true)
-        .build()?;
+        .build()
+        .context("Unable to create request buiilder for Currency request")?;
 
     let target_url = "https://lifestuff.thejcbfamily.workers.dev/currency";
 
@@ -57,7 +58,11 @@ pub fn handle_currency_operations(currency_args: &Currency, verbose: bool) -> Re
     json_body_map.insert("source", currency_args.from.to_uppercase());
     json_body_map.insert("amount", currency_args.amt.to_string());
 
-    let response = client.post(target_url).json(&json_body_map).send()?;
+    let response = client
+        .post(target_url)
+        .json(&json_body_map)
+        .send()
+        .context("Unable to send request to get currency exchange rate")?;
 
     ensure!(
         response.status() == StatusCode::OK,

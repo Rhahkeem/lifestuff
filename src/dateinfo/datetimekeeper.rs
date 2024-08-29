@@ -22,11 +22,11 @@ fn parse_input_date_yyyymmdd(input: &str, verbose: bool) -> Result<(u32, u8, u8)
         "Error parsing `yyyymmdd` date format. Invalid number of digits found:{}",
         yyyymmdd.to_string().len()
     );
-    return Ok((
+    Ok((
         yyyymmdd / 10000,
         ((yyyymmdd / 100) % 100) as u8,
         (yyyymmdd % 100) as u8,
-    ));
+    ))
 }
 
 fn parse_input_date_dmy(input: &str, verbose: bool) -> Result<(u32, u8, u8), Error> {

@@ -83,7 +83,7 @@ fn conversion_prep(
     }
 }
 
-pub fn perform_conversion(conversion_args: &Conversions) -> Result<()> {
+pub fn perform_conversion(conversion_args: Conversions) -> Result<()> {
     match &conversion_args.convert_type {
         ConversionOption::Area(conversion_option) => {
             conversion_prep(

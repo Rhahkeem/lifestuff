@@ -386,8 +386,7 @@ mod tests {
             utc_date_time: Date::MAX.midnight().assume_utc(),
         };
         let max_result_negative_delta = max_tester.apply_month_delta(-1);
-        println!("{:?}", max_result_negative_delta);
-        // assert!(max_result_negative_delta.is_ok());
+        assert!(max_result_negative_delta.is_ok());
     }
     #[test]
     fn test_apply_negative_month_delta_min_date_err() {
@@ -405,7 +404,6 @@ mod tests {
         };
 
         let min_result_positive_delta = min_tester.apply_month_delta(1);
-        println!("{:?}", min_result_positive_delta);
         assert!(min_result_positive_delta.is_ok());
     }
     // #[test]

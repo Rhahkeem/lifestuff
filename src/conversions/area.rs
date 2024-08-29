@@ -10,6 +10,7 @@ pub struct AreaConversion {
     pub to: Vec<AreaUnits>,
 }
 
+//noinspection SpellCheckingInspection
 #[derive(Subcommand, Debug, Display, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 pub enum AreaUnits {
     #[clap(action=clap::ArgAction::SetTrue, alias = "a")]
