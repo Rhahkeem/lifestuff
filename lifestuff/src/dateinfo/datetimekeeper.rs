@@ -12,7 +12,6 @@ pub struct DateTimeKeeper {
 
 #[doc = r"Helper Functions"]
 fn parse_input_date_yyyymmdd(input: &str, verbose: bool) -> Result<(u32, u8, u8), Error> {
-    // let yyyymmdd = u32::from_str_radix(input, 10);
     let yyyymmdd = input
         .parse::<u32>()
         .context(format!("Unable to parse '{input}' into a valid number"))?;
@@ -359,7 +358,7 @@ impl DateTimeKeeper {
         })
     }
 
-    ///Get the beginning of the next month
+    /// Get the beginning of the next month
     #[allow(dead_code)]
     pub fn next_month(&self) -> Result<Self> {
         ensure!(

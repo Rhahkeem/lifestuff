@@ -2,8 +2,6 @@ mod tests;
 
 use crate::dateinfo::{get_date_from_string_arg, DateTimeKeeper};
 use anyhow::{ensure, Ok, Result};
-use clap::Args;
-use anyhow::{Ok, Result};
 use lifestuff_types::interest::Interest;
 use time::{util, Date, Month};
 

@@ -12,7 +12,6 @@ use lifestuff_types::{parse, Commands};
 fn main() -> Result<()> {
     let cli = parse();
 
-    // let cli: Cli = commands::parse();
     let verbose = cli.verbose;
     if verbose {
         println!("CLI Args: {:?}", cli);

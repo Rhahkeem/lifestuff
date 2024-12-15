@@ -1,5 +1,4 @@
 use anyhow::{Context, Result};
-// use clap::{Args, Subcommand};
 use regex::Regex;
 use reqwest::blocking::Client;
 use reqwest::header;

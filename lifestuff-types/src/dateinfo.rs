@@ -1,7 +1,6 @@
 use clap::{Args, Subcommand};
 pub mod add;
 pub mod diff;
-// use anyhow::Result;
 
 #[derive(Args, Debug)]
 pub struct DateOperations {
@@ -11,10 +10,10 @@ pub struct DateOperations {
 
 #[derive(Subcommand, Debug)]
 pub enum DateOption {
-    ///Add a time period to a given date
+    /// Add a time period to a given date
     Add(add::Add),
-    ///Diff Two Dates
+    /// Diff Two Dates
     Diff(diff::Diff),
-    ///Information about the ordinal date
+    /// Information about the ordinal date
     Ordinal,
 }

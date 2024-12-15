@@ -1,6 +1,6 @@
 use clap::Args;
 
-///Convert from one currency to another
+/// Convert from one currency to another
 #[derive(Debug, Args, Clone)]
 pub struct Currency {
     #[clap(short, long, help = "Currency to convert from")]

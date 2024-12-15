@@ -1,7 +1,6 @@
 use anyhow::{ensure, Context, Result};
 mod tests;
 
-use clap::Args;
 use lifestuff_types::currency::Currency;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};

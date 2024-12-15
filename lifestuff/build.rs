@@ -1,5 +1,4 @@
 use std::env;
-// use clap::App; // Ensure you have the App struct available
 use clap::CommandFactory;
 use clap_complete::{generate_to, Shell};
 use lifestuff_types::Cli;

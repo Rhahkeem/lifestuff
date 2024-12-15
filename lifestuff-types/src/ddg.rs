@@ -10,8 +10,8 @@ pub struct DDGOperations {
 
 #[derive(Subcommand, Debug)]
 pub enum DDGOption {
-    ///Generates a Duckduckgo email alias address
+    /// Generates a Duckduckgo email alias address
     Generate,
-    ///Converts a regular email address to be used by Duckduckgo as a recipient
+    /// Converts a regular email address to be used by Duckduckgo as a recipient
     Convert(convert::DDGConvert),
 }

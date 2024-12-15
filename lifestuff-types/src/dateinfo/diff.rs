@@ -1,4 +1,3 @@
-// use anyhow::Result;
 use clap::{Args, Subcommand, ValueEnum};
 use strum::Display;
 
