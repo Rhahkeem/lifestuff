@@ -91,7 +91,7 @@ fn parse_input_date_dmy(input: &str, verbose: bool) -> Result<(u32, u8, u8), Err
 }
 
 fn get_last_day_of_proposed_month(year: i32, month: time::Month) -> u8 {
-    time::util::days_in_year_month(year, month)
+    time::util::days_in_month(month, year)
 }
 
 #[doc = r"Constructors"]
@@ -174,27 +174,20 @@ impl DateTimeKeeper {
 
         let interim = self.utc_date_time.replace_year(year);
 
-        ensure!(
-            interim.is_ok(),
-            "Unable to update year. Err: {:?}",
-            interim.err()
-        );
-
-        self.utc_date_time = interim.unwrap();
-        Ok(())
+        match interim {
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Unable to update year. Err: {:?}", e)),
+        }
+        
     }
     #[allow(dead_code)]
     pub fn set_month(&mut self, month: time::Month) -> Result<()> {
         let interim = self.utc_date_time.replace_month(month);
 
-        ensure!(
-            interim.is_ok(),
-            "Unable to update month. Err: {:?}",
-            interim.err()
-        );
-
-        self.utc_date_time = interim.unwrap();
-        Ok(())
+        match interim {
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Unable to update month. Err: {:?}", e)),
+        }
     }
     #[allow(dead_code)]
     pub fn set_month_num(&mut self, month_num: u8) -> Result<()> {
@@ -203,22 +196,17 @@ impl DateTimeKeeper {
             "Invalid month passed. Must be between 1 and 12"
         );
 
-        let month = Month::try_from(month_num).unwrap();
+        let month = Month::try_from(month_num)?;
 
         self.set_month(month)
     }
     #[allow(dead_code)]
     pub fn set_day(&mut self, day: u8) -> Result<()> {
         let interim = self.utc_date_time.replace_day(day);
-
-        ensure!(
-            interim.is_ok(),
-            "Unable to set day. Err: {:?}",
-            interim.err()
-        );
-
-        self.utc_date_time = interim.unwrap();
-        Ok(())
+        match interim {
+            Ok(_) => Ok(()),
+            Err(e) => Err(anyhow::anyhow!("Unable to set day. Err: {:?}", e)),
+        }
     }
 
     #[allow(dead_code)]
@@ -326,12 +314,11 @@ impl DateTimeKeeper {
             get_last_day_of_proposed_month(current_year, time::Month::try_from(new_month_idx)?);
 
         let new_instance =
-            if is_currently_last_day_of_month &&   current_day > last_day_of_proposed_month {
+            if is_currently_last_day_of_month && current_day > last_day_of_proposed_month {
                 self.apply_year_delta(whole_years)?
                     .utc_date_time
                     .replace_day(last_day_of_proposed_month)?
                     .replace_month(time::Month::try_from(new_month_idx)?)?
-                    
             } else {
                 self.apply_year_delta(whole_years)?
                     .utc_date_time
@@ -413,8 +400,7 @@ impl AddAssign<Duration> for DateTimeKeeper {
 impl DateTimeKeeper {
     pub fn is_last_day_of_month(&self) -> bool {
         let current_date = self.date();
-        current_date.day()
-            == time::util::days_in_year_month(current_date.year(), current_date.month())
+        current_date.day() == time::util::days_in_month(current_date.month(), current_date.year())
     }
 
     pub fn days_left_in_year(&self) -> u16 {

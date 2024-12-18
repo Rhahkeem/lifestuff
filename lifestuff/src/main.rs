@@ -1,10 +1,9 @@
 mod conversions;
-mod dateinfo;
-mod interest;
 mod currency;
-mod mileage; 
+mod dateinfo;
 mod ddg;
-
+mod interest;
+mod mileage;
 
 use anyhow::Result;
 use lifestuff_types::{parse, Commands};

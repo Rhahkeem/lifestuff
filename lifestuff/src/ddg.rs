@@ -1,20 +1,27 @@
 use anyhow::{Context, Result};
+use lifestuff_types::ddg::{DDGOperations, DDGOption};
 use regex::Regex;
 use reqwest::blocking::Client;
 use reqwest::header;
 use std::env;
 use std::time::Duration;
-use lifestuff_types::ddg::{DDGOperations, DDGOption};
 
 mod convert;
 mod generate;
 
 pub fn handle_ddg_operations(ddg_args: DDGOperations, verbose: bool) -> Result<()> {
     match &ddg_args.operation_type {
-        DDGOption::Generate => generate::handle_generate_ddg_address(verbose,  "https://quack.duckduckgo.com/api/email/addresses", create_client()?),
-        DDGOption::Convert(convert_args) => {
-            convert::perform_address_conversion(convert_args, verbose, "https://quack.duckduckgo.com/api/email/addresses", create_client()?)
-        }
+        DDGOption::Generate => generate::handle_generate_ddg_address(
+            verbose,
+            "https://quack.duckduckgo.com/api/email/addresses",
+            create_client()?,
+        ),
+        DDGOption::Convert(convert_args) => convert::perform_address_conversion(
+            convert_args,
+            verbose,
+            "https://quack.duckduckgo.com/api/email/addresses",
+            create_client()?,
+        ),
     }
 }
 

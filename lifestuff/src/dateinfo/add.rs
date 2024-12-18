@@ -1,8 +1,8 @@
 use crate::dateinfo;
 use anyhow::Result;
-use time::Duration;
 use lifestuff_types::dateinfo::add::Add;
 use lifestuff_types::dateinfo::add::TimePeriod;
+use time::Duration;
 
 pub fn do_add_date(add_args: &Add, verbose: bool) -> Result<()> {
     if verbose {

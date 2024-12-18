@@ -2,8 +2,8 @@ use crate::ddg::generate::generate_ddg_address;
 use crate::ddg::is_valid_email_address;
 use anyhow::{ensure, Result};
 use colored::Colorize;
-use reqwest::blocking::Client;
 use lifestuff_types::ddg::convert::DDGConvert;
+use reqwest::blocking::Client;
 
 fn validate_email(email: &str) -> Result<String> {
     ensure!(

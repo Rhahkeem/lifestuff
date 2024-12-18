@@ -63,9 +63,11 @@ pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Res
     let json_response: Value = serde_json::from_str(&response_body)?;
 
     // Check if the response contains the expected fields
-    let response_message = json_response["success"]["message"].as_str()
+    let response_message = json_response["success"]["message"]
+        .as_str()
         .ok_or_else(|| anyhow::anyhow!("Missing 'message' in response"))?;
-    let rate = json_response["success"]["rate"].as_f64()
+    let rate = json_response["success"]["rate"]
+        .as_f64()
         .ok_or_else(|| anyhow::anyhow!("Missing 'rate' in response"))? as f32;
 
     for currency_target in currency_args.to.iter() {

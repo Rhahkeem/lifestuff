@@ -19,7 +19,7 @@ fn get_start_of_next_month(verbose: bool) -> Result<DateTimeKeeper> {
 fn get_end_of_mortgage_period(end_date: &str, verbose: bool) -> Result<DateTimeKeeper> {
     let target_date = get_date_from_string_arg(Some(end_date), verbose)?;
     let num_days_in_month =
-        util::days_in_year_month(target_date.date().year(), target_date.date().month());
+        util::days_in_month(target_date.date().month(), target_date.date().year());
 
     target_date.date().replace_day(num_days_in_month)?;
 

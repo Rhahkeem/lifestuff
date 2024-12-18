@@ -12,7 +12,7 @@ pub fn parse() -> Cli {
     Cli::parse()
 }
 
-#[derive( Parser, Debug)]
+#[derive(Parser, Debug)]
 #[command(
     author = "Me!",
     about = "Lifestyle library!",

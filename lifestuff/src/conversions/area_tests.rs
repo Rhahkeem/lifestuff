@@ -1,8 +1,7 @@
-
 #[cfg(test)]
 mod tests {
+    use crate::conversions::area::area_conversions;
     use lifestuff_types::conversions::area::AreaUnits;
-    use super::*;
 
     #[test]
     fn test_area_conversion_acres_to_square_metres() {
@@ -10,7 +9,7 @@ mod tests {
         let to = AreaUnits::SquareMetres;
         let value = 1.0; // 1 acre
         let expected = 4046.856422; // Expected value in square metres
-        let result = area_conversions(&from, &to, &value);
+        let result = area_convesrsions(&from, &to, &value);
         assert!((result - expected).abs() < f64::EPSILON);
     }
 
