@@ -5,6 +5,7 @@ pub mod convert;
 #[derive(Args, Debug)]
 pub struct DDGOperations {
     #[command(subcommand)]
+    /// Subcommand for Duckduckgo operations
     pub operation_type: DDGOption,
 }
 

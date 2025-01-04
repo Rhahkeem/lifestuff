@@ -15,6 +15,7 @@ pub struct DDGConvert {
         long,
         value_parser = validate_email
     )]
+    /// Original recipient email address
     pub recipient: String,
     #[clap(
         action=clap::ArgAction::SetTrue,
@@ -23,6 +24,7 @@ pub struct DDGConvert {
         long,
         group = "senderAddress"
     )]
+    /// Use the default DDG address as a sender     
     pub use_default: bool,
     #[clap(
         action=clap::ArgAction::SetTrue,
@@ -31,6 +33,7 @@ pub struct DDGConvert {
         long,
         group = "senderAddress"
     )]
+    /// Generate a new DDG address to use as sender
     pub generate: bool,
     #[clap(
         action=clap::ArgAction::Set,
@@ -40,6 +43,7 @@ pub struct DDGConvert {
         group = "senderAddress",
         value_parser = validate_email
     )]
+    /// Optional DDG address to use as sender 
     pub sender: Option<String>,
 }
 

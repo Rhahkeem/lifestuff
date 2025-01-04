@@ -3,9 +3,12 @@ use clap::{Args, ValueEnum};
 #[derive(Debug, Args, Clone)]
 pub struct Add {
     #[clap(help = "Date to add time period to", long)]
+    /// Date to add time period to
     pub date: Option<String>,
+    /// Amount of time period to add to date
     pub val: i32,
     #[clap(help = "Time period to add to date", required = true)]
+    /// Time period to add to date
     pub period: TimePeriod,
 }
 

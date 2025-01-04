@@ -21,8 +21,10 @@ pub fn parse() -> Cli {
 )]
 pub struct Cli {
     #[arg(short, long, global=true, action=clap::ArgAction::SetTrue)]
+    /// Enable verbose output
     pub verbose: bool,
     #[command(subcommand)]
+    /// Commands for the program
     pub command: Commands,
 }
 

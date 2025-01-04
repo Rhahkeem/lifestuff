@@ -5,6 +5,7 @@ pub mod diff;
 #[derive(Args, Debug)]
 pub struct DateOperations {
     #[command(subcommand)]
+    /// Subcommand for date operations
     pub operation_type: DateOption,
 }
 

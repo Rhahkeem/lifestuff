@@ -6,6 +6,7 @@ pub mod distance;
 #[derive(Debug, Args)]
 pub struct Conversions {
     #[command(subcommand)]
+    /// Conversion type
     pub convert_type: ConversionOption,
 }
 

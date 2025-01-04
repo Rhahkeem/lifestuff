@@ -178,7 +178,6 @@ impl DateTimeKeeper {
             Ok(_) => Ok(()),
             Err(e) => Err(anyhow::anyhow!("Unable to update year. Err: {:?}", e)),
         }
-        
     }
     #[allow(dead_code)]
     pub fn set_month(&mut self, month: time::Month) -> Result<()> {

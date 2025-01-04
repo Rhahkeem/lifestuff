@@ -4,10 +4,13 @@ use strum::Display;
 #[derive(Debug, Args)]
 pub struct DistanceConversion {
     #[clap(long, required = true, display_order = 1)]
+    /// Unit to convert from
     pub from: DistanceUnits,
     #[clap(display_order = 2)]
+    /// Value to convert
     pub value: f64,
     #[clap(long, required = true, display_order = 3)]
+    /// Unit to convert to
     pub to: Vec<DistanceUnits>,
 }
 

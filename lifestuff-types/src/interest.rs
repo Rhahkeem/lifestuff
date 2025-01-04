@@ -9,6 +9,7 @@ pub struct Interest {
         allow_negative_numbers = false,
         required = true
     )]
+    /// Principal left on mortgage
     pub principal: f32,
     #[clap(
         help = "Interest rate (%)",
@@ -17,6 +18,7 @@ pub struct Interest {
         allow_negative_numbers = false,
         required = true
     )]
+    /// Current Interest rate (%)
     pub interest_rate: f32,
     #[clap(
         help = "Monthly payment amount",
@@ -24,6 +26,7 @@ pub struct Interest {
         allow_negative_numbers = false,
         required = true
     )]
+    /// Monthly payment amount
     pub repayment: f32,
     #[clap(
         help = "Max annual repayment percentage (%)",
@@ -33,6 +36,7 @@ pub struct Interest {
         required = true,
         visible_alias = "annual-limit"
     )]
+    /// Maximum annual repayment percentage (%) allowed
     pub max_repayment_pct: Option<u8>,
     #[clap(
         help = "Max annual supplementary downpayment ",
@@ -43,6 +47,7 @@ pub struct Interest {
         allow_negative_numbers = false,
         visible_alias = "annual-downpayment"
     )]
+    /// Maximum annual supplementary downpayment allowed
     pub annual_downpayment: Option<f32>,
     #[clap(
         help = "Mortgage calculation end date (dd/mm/yyyy)",
@@ -50,5 +55,6 @@ pub struct Interest {
         long,
         allow_negative_numbers = false
     )]
+    /// Mortgage calculation end date (dd/mm/yyyy)
     pub end_date: String,
 }

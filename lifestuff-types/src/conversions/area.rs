@@ -4,9 +4,12 @@ use strum::Display;
 #[derive(Debug, Args)]
 pub struct AreaConversion {
     #[arg(long, required = true)]
+    /// Unit to convert from
     pub from: AreaUnits,
+    /// Value to convert
     pub value: f64,
     #[arg(long, required = true)]
+    /// Unit to convert to
     pub to: Vec<AreaUnits>,
 }
 
