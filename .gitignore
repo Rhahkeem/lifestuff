@@ -1,6 +1,7 @@
-/target
+/target/
+lifestuff/target/
+lifestuff-types/target/
 .vscode/
-Cargo.lock
 .idea/
 .aider*
 .env
