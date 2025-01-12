@@ -744,13 +744,15 @@ checksum = "433bfe06b8c75da9b2e3fbea6e5329ff87748f0b144ef75306e674c3f6f7c13f"
 
 [[package]]
 name = "lifestuff"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "anyhow",
  "clap",
+ "clap_builder",
  "clap_complete",
  "colored",
  "dotenv",
+ "lifestuff-types",
  "mockito",
  "regex",
  "reqwest",
@@ -758,6 +760,16 @@ dependencies = [
  "serde_json",
  "strum",
  "time",
+]
+
+[[package]]
+name = "lifestuff-types"
+version = "0.0.1"
+dependencies = [
+ "anyhow",
+ "clap",
+ "regex",
+ "strum",
 ]
 
 [[package]]
@@ -1155,9 +1167,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.23.17"
+version = "0.23.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f1a745511c54ba6d4465e8d5dfbd81b45791756de28d4981af70d6dca128f1e"
+checksum = "8f287924602bf649d949c63dc8ac8b235fa5387d394020705b80c4eb597ce5b8"
 dependencies = [
  "once_cell",
  "rustls-pki-types",
