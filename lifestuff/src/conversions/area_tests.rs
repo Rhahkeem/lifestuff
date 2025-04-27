@@ -14,8 +14,7 @@ mod tests {
     }
 
     #[test]
-    fn test_area_conversion_square_metres_to_acres() {
-        let from = AreaUnits::SquareMetres;
+    fn test_area_conversion_square_metres_to_acres() {        let from = AreaUnits::SquareMetres;
         let to = AreaUnits::Acres;
         let value = 4046.856422; // 1 acre in square metres
         let expected = 1.0; // Expected value in acres

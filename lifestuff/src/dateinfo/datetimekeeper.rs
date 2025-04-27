@@ -166,7 +166,7 @@ impl DateTimeKeeper {
     }
 
     #[allow(dead_code)]
-    pub fn set_year(&mut self, year: i32) -> Result<()> {
+    pub fn set_year(&mut self, year: i32) -> Result<(), anyhow::Error> {
         ensure!(
             year > 0,
             "Attempted to set year to a negative value. Hint: Use apply year delta instead"
@@ -174,19 +174,24 @@ impl DateTimeKeeper {
 
         let interim = self.utc_date_time.replace_year(year);
 
-        match interim {
-            Ok(_) => Ok(()),
-            Err(e) => Err(anyhow::anyhow!("Unable to update year. Err: {:?}", e)),
-        }
+        self.utc_date_time = match interim {
+            Ok(good_result) => good_result,
+            Err(e) => return Err(anyhow::anyhow!("Unable to update year. Err: {:?}", e)),
+        };
+
+        Ok(())
     }
+
     #[allow(dead_code)]
     pub fn set_month(&mut self, month: time::Month) -> Result<()> {
         let interim = self.utc_date_time.replace_month(month);
 
-        match interim {
-            Ok(_) => Ok(()),
-            Err(e) => Err(anyhow::anyhow!("Unable to update month. Err: {:?}", e)),
-        }
+        self.utc_date_time = match interim {
+            Ok(good_result) => good_result,
+            Err(e) => return Err(anyhow::anyhow!("Unable to month year. Err: {:?}", e)),
+        };
+
+        Ok(())
     }
     #[allow(dead_code)]
     pub fn set_month_num(&mut self, month_num: u8) -> Result<()> {
@@ -202,10 +207,13 @@ impl DateTimeKeeper {
     #[allow(dead_code)]
     pub fn set_day(&mut self, day: u8) -> Result<()> {
         let interim = self.utc_date_time.replace_day(day);
-        match interim {
-            Ok(_) => Ok(()),
-            Err(e) => Err(anyhow::anyhow!("Unable to set day. Err: {:?}", e)),
-        }
+
+        self.utc_date_time = match interim {
+            Ok(good_result) => good_result,
+            Err(e) => return Err(anyhow::anyhow!("Unable to update day. Err: {:?}", e)),
+        };
+
+        Ok(())
     }
 
     #[allow(dead_code)]

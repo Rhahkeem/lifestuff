@@ -97,11 +97,13 @@ mod tests {
     }
 
     #[test]
-    fn test_set_month_fails_invalid_date() {
-        let mut tester = get_31_jan_2023();
+    fn test_set_month_with_invalid_transition_leap_year() {
+        let mut tester = DateTimeKeeper::new_from_dmy(30, 1, 2024).unwrap();
         let test_result = tester.set_month(time::Month::February);
+        // Should not work since February has 29 days in 2024
         assert!(test_result.is_err());
     }
+
     #[test]
     fn test_set_month_as_num_fails_invalid_date() {
         let mut tester = get_31_jan_2023();
