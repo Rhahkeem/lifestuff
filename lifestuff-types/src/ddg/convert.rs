@@ -43,7 +43,7 @@ pub struct DDGConvert {
         group = "senderAddress",
         value_parser = validate_email
     )]
-    /// Optional DDG address to use as sender 
+    /// Optional DDG address to use as sender
     pub sender: Option<String>,
 }
 
