@@ -106,3 +106,77 @@ pub fn perform_conversion(conversion_args: Conversions) -> Result<()> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lifestuff_types::conversions::area::AreaUnits;
+    use lifestuff_types::conversions::distance::DistanceUnits;
+    use lifestuff_types::conversions::{ConversionOption, Conversions};
+    use lifestuff_types::conversions::area::AreaConversion;
+    use lifestuff_types::conversions::distance::DistanceConversion;
+
+    #[test]
+    fn test_unit_conversions_area() {
+        let from = UnitUnion { area: AreaUnits::SquareMetres };
+        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Area);
+        assert!((result - 0.001).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_unit_conversions_distance() {
+        let from = UnitUnion { distance: DistanceUnits::Metres };
+        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Distance);
+        assert_eq!(result, 1.0);
+    }
+
+    #[test]
+    fn test_format_conversion_output_area() {
+        let from = UnitUnion { area: AreaUnits::SquareMetres };
+        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let result = format_conversion_output(&from, &to, &1000.0, &0.001, &ConversionType::Area);
+        assert_eq!(result, "1000 SquareMetres = 0.001 SqKilometres");
+    }
+
+    #[test]
+    fn test_format_conversion_output_distance() {
+        let from = UnitUnion { distance: DistanceUnits::Metres };
+        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let result = format_conversion_output(&from, &to, &1000.0, &1.0, &ConversionType::Distance);
+        assert_eq!(result, "1000 Metres = 1 Kilometres");
+    }
+
+    #[test]
+    fn test_perform_conversion_area() {
+        let conversion = Conversions {
+            convert_type: ConversionOption::Area(AreaConversion {
+                from: AreaUnits::SquareMetres,
+                to: vec![AreaUnits::SqKilometres],
+                value: 1000.0,
+            }),
+        };
+        let result = perform_conversion(conversion);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_perform_conversion_distance() {
+        let conversion = Conversions {
+            convert_type: ConversionOption::Distance(DistanceConversion {
+                from: DistanceUnits::Metres,
+                to: vec![DistanceUnits::Kilometres],
+                value: 1000.0,
+            }),
+        };
+        let result = perform_conversion(conversion);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_conversion_type_display() {
+        assert_eq!(format!("{}", ConversionType::Area), "Area");
+        assert_eq!(format!("{}", ConversionType::Distance), "Distance");
+    }
+}
