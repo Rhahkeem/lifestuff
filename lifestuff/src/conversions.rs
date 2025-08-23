@@ -150,6 +150,13 @@ mod tests {
 
     #[test]
     fn test_perform_conversion_area() {
+        // Test that 1000 square metres = 0.001 square kilometres
+        let from = UnitUnion { area: AreaUnits::SquareMetres };
+        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Area);
+        assert!((result - 0.001).abs() < f64::EPSILON);
+        
+        // Test the full conversion function
         let conversion = Conversions {
             convert_type: ConversionOption::Area(AreaConversion {
                 from: AreaUnits::SquareMetres,
@@ -163,6 +170,13 @@ mod tests {
 
     #[test]
     fn test_perform_conversion_distance() {
+        // Test that 1000 metres = 1 kilometre
+        let from = UnitUnion { distance: DistanceUnits::Metres };
+        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Distance);
+        assert_eq!(result, 1.0);
+        
+        // Test the full conversion function
         let conversion = Conversions {
             convert_type: ConversionOption::Distance(DistanceConversion {
                 from: DistanceUnits::Metres,
