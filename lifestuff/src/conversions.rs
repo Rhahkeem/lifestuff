@@ -189,8 +189,25 @@ mod tests {
     }
 
     #[test]
-    fn test_conversion_type_display() {
-        assert_eq!(format!("{}", ConversionType::Area), "Area");
-        assert_eq!(format!("{}", ConversionType::Distance), "Distance");
+    fn test_conversion_type_routing() {
+        // Test that different conversion types route to correct handlers
+        let area_from = UnitUnion { area: AreaUnits::Acres };
+        let area_to = UnitUnion { area: AreaUnits::SquareMetres };
+        let area_result = unit_conversions(&area_from, &area_to, &1.0, &ConversionType::Area);
+        assert!((area_result - 4046.856422).abs() < 0.001);
+        
+        let distance_from = UnitUnion { distance: DistanceUnits::Miles };
+        let distance_to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let distance_result = unit_conversions(&distance_from, &distance_to, &1.0, &ConversionType::Distance);
+        assert!((distance_result - 1.609344).abs() < 0.001);
+        
+        // Verify the display implementation is used correctly in format_conversion_output
+        let area_output = format_conversion_output(&area_from, &area_to, &1.0, &area_result, &ConversionType::Area);
+        assert!(area_output.contains("Acres"));
+        assert!(area_output.contains("SquareMetres"));
+        
+        let distance_output = format_conversion_output(&distance_from, &distance_to, &1.0, &distance_result, &ConversionType::Distance);
+        assert!(distance_output.contains("Miles"));
+        assert!(distance_output.contains("Kilometres"));
     }
 }

@@ -39,30 +39,53 @@ mod tests {
     // These tests focus on the core logic and error handling patterns
 
     #[test]
-    fn test_main_function_exists() {
-        // This test verifies that the main function exists and has the correct signature
-        // We can't easily test the full CLI parsing without mocking command line args
-        assert!(true); // Placeholder test
+    fn test_command_routing() {
+        use lifestuff_types::conversions::{ConversionOption, Conversions};
+        use lifestuff_types::conversions::distance::{DistanceConversion, DistanceUnits};
+        
+        // Test that conversion command routes to correct handler
+        let conversion = Conversions {
+            convert_type: ConversionOption::Distance(DistanceConversion {
+                from: DistanceUnits::Metres,
+                to: vec![DistanceUnits::Kilometres],
+                value: 1000.0,
+            }),
+        };
+        
+        // Verify the conversion logic works
+        let result = conversions::perform_conversion(conversion);
+        assert!(result.is_ok());
     }
 
     #[test]
-    fn test_error_handling_pattern() {
-        // Test that our error handling pattern works
-        let test_result: Result<()> = Ok(());
-        if let Err(_e) = test_result {
-            // This branch would handle errors like in main()
-            assert!(false, "Should not reach this branch");
-        }
-        assert!(true);
+    fn test_error_propagation() {
+        use lifestuff_types::interest::Interest;
+        
+        // Test that errors from handlers are properly propagated
+        let invalid_interest = Interest {
+            principal: -1000.0,  // Invalid negative principal
+            interest_rate: 5.0,
+            repayment: 500.0,
+            max_repayment_pct: Some(10),
+            annual_downpayment: None,
+            end_date: "2024-01-01".to_string(),
+        };
+        
+        let result = interest::handle_interest_calculations(invalid_interest, false);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("positive principal"));
     }
 
     #[test]
-    fn test_anyhow_result_type() {
-        // Verify that we can create and handle anyhow::Result types
-        let success: Result<()> = Ok(());
-        assert!(success.is_ok());
-
-        let error: Result<()> = Err(anyhow::anyhow!("Test error"));
-        assert!(error.is_err());
+    fn test_verbose_mode_integration() {
+        use lifestuff_types::mileage::Mileage;
+        
+        // Test that verbose mode affects handler behavior
+        // Both should succeed regardless of verbose mode
+        let result_quiet = mileage::handle_mileage_operations(Mileage { mileage: 8000 }, false);
+        assert!(result_quiet.is_ok());
+        
+        let result_verbose = mileage::handle_mileage_operations(Mileage { mileage: 8000 }, true);
+        assert!(result_verbose.is_ok());
     }
 }
