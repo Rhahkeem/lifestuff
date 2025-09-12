@@ -7,6 +7,7 @@ pub mod dateinfo;
 pub mod ddg;
 pub mod interest;
 pub mod mileage;
+pub mod mortgage;
 
 pub fn parse() -> Cli {
     Cli::parse()
@@ -42,4 +43,6 @@ pub enum Commands {
     Mileage(mileage::Mileage),
     /// DuckDuckGo Address
     DDG(ddg::DDGOperations),
+    /// Mortgage tracking and calculations
+    Mortgage(mortgage::MortgageCommand),
 }

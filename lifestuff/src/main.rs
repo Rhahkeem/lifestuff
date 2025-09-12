@@ -4,6 +4,7 @@ mod dateinfo;
 mod ddg;
 mod interest;
 mod mileage;
+mod mortgage;
 
 use anyhow::Result;
 use lifestuff_types::{parse, Commands};
@@ -22,6 +23,7 @@ fn main() -> Result<()> {
         Commands::Currency(args) => currency::handle_currency_operations(args, verbose),
         Commands::Mileage(args) => mileage::handle_mileage_operations(args, verbose),
         Commands::DDG(args) => ddg::handle_ddg_operations(args, verbose),
+        Commands::Mortgage(args) => mortgage::handle_mortgage_operations(args, verbose),
     };
 
     if let Err(e) = da_answer {

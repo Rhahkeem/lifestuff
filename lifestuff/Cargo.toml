@@ -16,6 +16,7 @@ time = { version = "~0.3", features = ["macros", "formatting", "parsing"] }
 regex = "~1"
 lifestuff-types = { path = "../lifestuff-types" }
 clap_builder = "4.5.21"
+chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
 dotenv = "0.15.0"

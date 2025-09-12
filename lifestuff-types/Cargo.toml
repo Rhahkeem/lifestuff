@@ -7,5 +7,6 @@ edition = "2021"
 [dependencies]
 clap = { version = "~4", features = ["derive"] }
 strum = { version = "~0", features = ["derive"] }
+time = { version = "~0.3", features = ["macros", "formatting", "parsing"] }
 regex = "~1"
 anyhow = "~1"
