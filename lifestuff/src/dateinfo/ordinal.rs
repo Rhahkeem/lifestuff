@@ -9,3 +9,14 @@ pub fn handle_ordinal_operations() -> Result<()> {
     println!("This is week {} of the year ", today.ordinal_week());
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_handle_ordinal_operations() {
+        let result = handle_ordinal_operations();
+        assert!(result.is_ok());
+    }
+}

@@ -15,3 +15,62 @@ pub fn handle_date_operations(date_args: DateOperations, verbose: bool) -> Resul
         DateOption::Ordinal => ordinal::handle_ordinal_operations(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lifestuff_types::dateinfo::{DateOperations, DateOption};
+    use lifestuff_types::dateinfo::diff::{Diff, DateDuration};
+    use lifestuff_types::dateinfo::add::{Add, TimePeriod};
+
+    #[test]
+    fn test_handle_date_operations_diff() {
+        let diff_args = Diff {
+            date1: "01/01/2023".to_string(),
+            date2: Some("02/01/2023".to_string()),
+            to: vec![DateDuration::Days],
+        };
+        let date_ops = DateOperations {
+            operation_type: DateOption::Diff(diff_args),
+        };
+        let result = handle_date_operations(date_ops, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_handle_date_operations_add() {
+        let add_args = Add {
+            date: Some("01/01/2023".to_string()),
+            val: 1,
+            period: TimePeriod::Days,
+        };
+        let date_ops = DateOperations {
+            operation_type: DateOption::Add(add_args),
+        };
+        let result = handle_date_operations(date_ops, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_handle_date_operations_ordinal() {
+        let date_ops = DateOperations {
+            operation_type: DateOption::Ordinal,
+        };
+        let result = handle_date_operations(date_ops, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_handle_date_operations_verbose() {
+        let add_args = Add {
+            date: Some("01/01/2023".to_string()),
+            val: 1,
+            period: TimePeriod::Days,
+        };
+        let date_ops = DateOperations {
+            operation_type: DateOption::Add(add_args),
+        };
+        let result = handle_date_operations(date_ops, true);
+        assert!(result.is_ok());
+    }
+}

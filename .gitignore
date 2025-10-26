@@ -5,3 +5,7 @@ lifestuff-types/target/
 .idea/
 .aider*
 .env
+
+# Coverage reports
+lcov.info
+target/llvm-cov/

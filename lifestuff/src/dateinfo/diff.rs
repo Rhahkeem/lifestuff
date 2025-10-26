@@ -36,3 +36,98 @@ pub fn do_diff_date(diff_args: &Diff, verbose: bool) -> Result<()> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lifestuff_types::dateinfo::diff::{Diff, DateDuration};
+
+    #[test]
+    fn test_do_output_format_singular() {
+        let result = do_output_format(1, "days");
+        assert_eq!(result, "1 full day");
+    }
+
+    #[test]
+    fn test_do_output_format_plural() {
+        let result = do_output_format(5, "days");
+        assert_eq!(result, "5 full days");
+    }
+
+    #[test]
+    fn test_do_diff_date_days() {
+        let diff_args = Diff {
+            date1: "05/01/2023".to_string(),
+            date2: Some("01/01/2023".to_string()),
+            to: vec![DateDuration::Days],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_hours() {
+        let diff_args = Diff {
+            date1: "01/01/2023".to_string(),
+            date2: Some("02/01/2023".to_string()),
+            to: vec![DateDuration::Hours],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_weeks() {
+        let diff_args = Diff {
+            date1: "15/01/2023".to_string(),
+            date2: Some("01/01/2023".to_string()),
+            to: vec![DateDuration::Weeks],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_years() {
+        let diff_args = Diff {
+            date1: "01/01/2024".to_string(),
+            date2: Some("01/01/2023".to_string()),
+            to: vec![DateDuration::Years],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_multiple_durations() {
+        let diff_args = Diff {
+            date1: "05/01/2023".to_string(),
+            date2: Some("01/01/2023".to_string()),
+            to: vec![DateDuration::Days, DateDuration::Hours, DateDuration::Weeks],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_verbose() {
+        let diff_args = Diff {
+            date1: "05/01/2023".to_string(),
+            date2: Some("01/01/2023".to_string()),
+            to: vec![DateDuration::Days],
+        };
+        let result = do_diff_date(&diff_args, true);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_do_diff_date_no_second_date() {
+        let diff_args = Diff {
+            date1: "05/01/2023".to_string(),
+            date2: None,
+            to: vec![DateDuration::Days],
+        };
+        let result = do_diff_date(&diff_args, false);
+        assert!(result.is_ok());
+    }
+}
