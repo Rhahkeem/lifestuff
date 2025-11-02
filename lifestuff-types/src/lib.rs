@@ -7,6 +7,7 @@ pub mod dateinfo;
 pub mod ddg;
 pub mod interest;
 pub mod mileage;
+pub mod mortgage;
 
 pub fn parse() -> Cli {
     Cli::parse()
@@ -16,7 +17,7 @@ pub fn parse() -> Cli {
 #[command(
     author = "Me!",
     about = "Lifestyle library!",
-    version = "0.2.0",
+    version = "0.3.0",
     long_about = "Something Something Something Daaaarksiiiide"
 )]
 pub struct Cli {
@@ -42,6 +43,8 @@ pub enum Commands {
     Mileage(mileage::Mileage),
     /// DuckDuckGo Address
     DDG(ddg::DDGOperations),
+    /// Mortgage Management
+    Mortgage(mortgage::MortgageCommand),
 }
 
 #[cfg(test)]
@@ -58,8 +61,8 @@ mod tests {
 
     #[test]
     fn test_cli_struct_creation() {
-        use crate::conversions::{Conversions, ConversionOption};
         use crate::conversions::area::{AreaConversion, AreaUnits};
+        use crate::conversions::{ConversionOption, Conversions};
 
         let conversion = Conversions {
             convert_type: ConversionOption::Area(AreaConversion {
@@ -83,8 +86,8 @@ mod tests {
 
     #[test]
     fn test_command_display_formats() {
-        use crate::conversions::{Conversions, ConversionOption};
         use crate::conversions::area::{AreaConversion, AreaUnits};
+        use crate::conversions::{ConversionOption, Conversions};
         use crate::dateinfo::{DateOperations, DateOption};
         use crate::mileage::Mileage;
 
@@ -98,13 +101,13 @@ mod tests {
         });
         let display_str = format!("{}", conversion);
         assert!(display_str.contains("Convert"));
-        
+
         let date_op = Commands::Dates(DateOperations {
             operation_type: DateOption::Ordinal,
         });
         let date_display = format!("{}", date_op);
         assert!(date_display.contains("Dates"));
-        
+
         let mileage = Commands::Mileage(Mileage { mileage: 8500 });
         let mileage_display = format!("{}", mileage);
         assert!(mileage_display.contains("Mileage"));
@@ -112,8 +115,8 @@ mod tests {
 
     #[test]
     fn test_command_data_integrity() {
-        use crate::conversions::{Conversions, ConversionOption};
         use crate::conversions::distance::{DistanceConversion, DistanceUnits};
+        use crate::conversions::{ConversionOption, Conversions};
         use crate::interest::Interest;
 
         // Test that command data is properly preserved through creation
@@ -124,7 +127,7 @@ mod tests {
                 value: 100.0,
             }),
         });
-        
+
         // Verify the command maintains data integrity
         if let Commands::Convert(conv) = command {
             if let ConversionOption::Distance(dc) = conv.convert_type {
@@ -137,17 +140,17 @@ mod tests {
         } else {
             panic!("Expected Convert command");
         }
-        
+
         // Test Interest command preserves optional fields correctly
         let interest = Commands::Interest(Interest {
             principal: 50000.0,
             interest_rate: 4.5,
             repayment: 1000.0,
-            max_repayment_pct: None,  // Testing None variant
-            annual_downpayment: Some(2500.0),  // Testing Some variant
+            max_repayment_pct: None,          // Testing None variant
+            annual_downpayment: Some(2500.0), // Testing Some variant
             end_date: "2025-12-31".to_string(),
         });
-        
+
         if let Commands::Interest(int) = interest {
             assert_eq!(int.principal, 50000.0);
             assert!(int.max_repayment_pct.is_none());

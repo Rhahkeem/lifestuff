@@ -110,40 +110,56 @@ pub fn perform_conversion(conversion_args: Conversions) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use lifestuff_types::conversions::area::AreaConversion;
     use lifestuff_types::conversions::area::AreaUnits;
+    use lifestuff_types::conversions::distance::DistanceConversion;
     use lifestuff_types::conversions::distance::DistanceUnits;
     use lifestuff_types::conversions::{ConversionOption, Conversions};
-    use lifestuff_types::conversions::area::AreaConversion;
-    use lifestuff_types::conversions::distance::DistanceConversion;
 
     #[test]
     fn test_unit_conversions_area() {
-        let from = UnitUnion { area: AreaUnits::SquareMetres };
-        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let from = UnitUnion {
+            area: AreaUnits::SquareMetres,
+        };
+        let to = UnitUnion {
+            area: AreaUnits::SqKilometres,
+        };
         let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Area);
         assert!((result - 0.001).abs() < 0.0001);
     }
 
     #[test]
     fn test_unit_conversions_distance() {
-        let from = UnitUnion { distance: DistanceUnits::Metres };
-        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let from = UnitUnion {
+            distance: DistanceUnits::Metres,
+        };
+        let to = UnitUnion {
+            distance: DistanceUnits::Kilometres,
+        };
         let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Distance);
         assert_eq!(result, 1.0);
     }
 
     #[test]
     fn test_format_conversion_output_area() {
-        let from = UnitUnion { area: AreaUnits::SquareMetres };
-        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let from = UnitUnion {
+            area: AreaUnits::SquareMetres,
+        };
+        let to = UnitUnion {
+            area: AreaUnits::SqKilometres,
+        };
         let result = format_conversion_output(&from, &to, &1000.0, &0.001, &ConversionType::Area);
         assert_eq!(result, "1000 SquareMetres = 0.001 SqKilometres");
     }
 
     #[test]
     fn test_format_conversion_output_distance() {
-        let from = UnitUnion { distance: DistanceUnits::Metres };
-        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let from = UnitUnion {
+            distance: DistanceUnits::Metres,
+        };
+        let to = UnitUnion {
+            distance: DistanceUnits::Kilometres,
+        };
         let result = format_conversion_output(&from, &to, &1000.0, &1.0, &ConversionType::Distance);
         assert_eq!(result, "1000 Metres = 1 Kilometres");
     }
@@ -151,11 +167,15 @@ mod tests {
     #[test]
     fn test_perform_conversion_area() {
         // Test that 1000 square metres = 0.001 square kilometres
-        let from = UnitUnion { area: AreaUnits::SquareMetres };
-        let to = UnitUnion { area: AreaUnits::SqKilometres };
+        let from = UnitUnion {
+            area: AreaUnits::SquareMetres,
+        };
+        let to = UnitUnion {
+            area: AreaUnits::SqKilometres,
+        };
         let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Area);
         assert!((result - 0.001).abs() < f64::EPSILON);
-        
+
         // Test the full conversion function
         let conversion = Conversions {
             convert_type: ConversionOption::Area(AreaConversion {
@@ -171,11 +191,15 @@ mod tests {
     #[test]
     fn test_perform_conversion_distance() {
         // Test that 1000 metres = 1 kilometre
-        let from = UnitUnion { distance: DistanceUnits::Metres };
-        let to = UnitUnion { distance: DistanceUnits::Kilometres };
+        let from = UnitUnion {
+            distance: DistanceUnits::Metres,
+        };
+        let to = UnitUnion {
+            distance: DistanceUnits::Kilometres,
+        };
         let result = unit_conversions(&from, &to, &1000.0, &ConversionType::Distance);
         assert_eq!(result, 1.0);
-        
+
         // Test the full conversion function
         let conversion = Conversions {
             convert_type: ConversionOption::Distance(DistanceConversion {
@@ -191,22 +215,47 @@ mod tests {
     #[test]
     fn test_conversion_type_routing() {
         // Test that different conversion types route to correct handlers
-        let area_from = UnitUnion { area: AreaUnits::Acres };
-        let area_to = UnitUnion { area: AreaUnits::SquareMetres };
+        let area_from = UnitUnion {
+            area: AreaUnits::Acres,
+        };
+        let area_to = UnitUnion {
+            area: AreaUnits::SquareMetres,
+        };
         let area_result = unit_conversions(&area_from, &area_to, &1.0, &ConversionType::Area);
         assert!((area_result - 4046.856422).abs() < 0.001);
-        
-        let distance_from = UnitUnion { distance: DistanceUnits::Miles };
-        let distance_to = UnitUnion { distance: DistanceUnits::Kilometres };
-        let distance_result = unit_conversions(&distance_from, &distance_to, &1.0, &ConversionType::Distance);
+
+        let distance_from = UnitUnion {
+            distance: DistanceUnits::Miles,
+        };
+        let distance_to = UnitUnion {
+            distance: DistanceUnits::Kilometres,
+        };
+        let distance_result = unit_conversions(
+            &distance_from,
+            &distance_to,
+            &1.0,
+            &ConversionType::Distance,
+        );
         assert!((distance_result - 1.609344).abs() < 0.001);
-        
+
         // Verify the display implementation is used correctly in format_conversion_output
-        let area_output = format_conversion_output(&area_from, &area_to, &1.0, &area_result, &ConversionType::Area);
+        let area_output = format_conversion_output(
+            &area_from,
+            &area_to,
+            &1.0,
+            &area_result,
+            &ConversionType::Area,
+        );
         assert!(area_output.contains("Acres"));
         assert!(area_output.contains("SquareMetres"));
-        
-        let distance_output = format_conversion_output(&distance_from, &distance_to, &1.0, &distance_result, &ConversionType::Distance);
+
+        let distance_output = format_conversion_output(
+            &distance_from,
+            &distance_to,
+            &1.0,
+            &distance_result,
+            &ConversionType::Distance,
+        );
         assert!(distance_output.contains("Miles"));
         assert!(distance_output.contains("Kilometres"));
     }

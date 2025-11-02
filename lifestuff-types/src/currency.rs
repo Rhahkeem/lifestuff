@@ -17,4 +17,10 @@ pub struct Currency {
     #[clap(short, long, help = "Currency to convert to")]
     /// Currency to convert to
     pub to: Vec<String>,
+    #[arg(
+        long,
+        global = true,
+        help = "API endpoint URL (e.g., https://api.example.com). Falls back to LIFESTUFF_API_ENDPOINT env var, then http://localhost:8787"
+    )]
+    pub endpoint: Option<String>,
 }

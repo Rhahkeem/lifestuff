@@ -87,11 +87,11 @@ mod tests {
         // This test would require mocking the HTTP client, so we'll skip the actual call
         // but test that the function signature works
         use lifestuff_types::ddg::{DDGOperations, DDGOption};
-        
+
         let _ddg_ops = DDGOperations {
             operation_type: DDGOption::Generate,
         };
-        
+
         // We can't easily test this without mocking the HTTP client
         // but we can verify the function exists and has the right signature
         assert!(true); // Placeholder test

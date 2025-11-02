@@ -13,7 +13,8 @@ mod tests {
 
     #[test]
     fn test_distance_conversion_yards_to_kilometres() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Kilometres, &1000.0);
+        let result =
+            distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Kilometres, &1000.0);
         assert!((result - 0.9144).abs() < 0.0001);
     }
 
@@ -55,7 +56,8 @@ mod tests {
 
     #[test]
     fn test_distance_conversion_kilometres_to_miles() {
-        let result = distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Miles, &1.609344);
+        let result =
+            distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Miles, &1.609344);
         assert!((result - 1.0).abs() < 0.0001);
     }
 
