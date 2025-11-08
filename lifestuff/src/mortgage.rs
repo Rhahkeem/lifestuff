@@ -581,10 +581,7 @@ mod tests {
             DEFAULT_MORTGAGE_HOST.starts_with("http://"),
             "Local host should start with http://"
         );
-        assert!(
-            !DEFAULT_MORTGAGE_HOST.is_empty(),
-            "Local host should not be empty"
-        );
+        // Note: is_empty() check removed as it always evaluates to false for const strings
         assert!(
             !DEFAULT_MORTGAGE_HOST.ends_with('/'),
             "Default host should not have trailing slash"

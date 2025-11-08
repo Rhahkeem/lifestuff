@@ -51,13 +51,7 @@ pub enum Commands {
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_parse_function_exists() {
-        // Test that the parse function exists and can be called
-        // We can't easily test CLI parsing without actual command line args
-        // but we can verify the function signature
-        assert!(true); // Placeholder test
-    }
+    // Note: CLI parsing tests are handled through integration tests
 
     #[test]
     fn test_cli_struct_creation() {
@@ -79,7 +73,7 @@ mod tests {
 
         assert!(!cli.verbose);
         match cli.command {
-            Commands::Convert(_) => assert!(true),
+            Commands::Convert(_) => {} // Test passes if we match Convert
             _ => panic!("Expected Convert command"),
         }
     }

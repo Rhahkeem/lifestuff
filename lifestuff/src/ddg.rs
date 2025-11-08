@@ -93,8 +93,7 @@ mod tests {
         };
 
         // We can't easily test this without mocking the HTTP client
-        // but we can verify the function exists and has the right signature
-        assert!(true); // Placeholder test
+        // This test verifies the struct can be instantiated
     }
 
     #[test]

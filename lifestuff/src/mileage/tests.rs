@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+mod mileage_tests {
 
     #[test]
     fn test_handle_mileage_operations_under_allowance() {

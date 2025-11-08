@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests {
+mod interest_tests {
 
     #[test]
     fn test_handle_interest_calculations_valid() {
