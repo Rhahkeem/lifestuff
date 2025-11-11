@@ -1,6 +1,6 @@
 # Lifestuff
 
-A Rust-based command-line utility for lifestyle calculations and conversions, including unit conversions, date operations, financial calculations, currency conversions, mileage tracking, and DuckDuckGo email utilities.
+A Rust-based command-line utility for lifestyle calculations and conversions, including unit conversions, date operations, financial calculations, currency conversions, mileage tracking, mortgage management, and DuckDuckGo email utilities.
 
 ## Building
 
@@ -41,6 +41,7 @@ Commands:
   interest  Interest Calculations
   currency  Currency Conversion Operations
   mileage   Mileage Calculations
+  mortgage  Mortgage Management
   ddg       DuckDuckGo Address
   help      Print this message or the help of the given subcommand(s)
 
@@ -137,15 +138,29 @@ Currency Conversion Operations
 Usage: lifestuff currency [OPTIONS] --from <FROM> --amt <AMT>
 
 Options:
-  -f, --from <FROM>  Currency to convert from
+  -f, --from <FROM>        Currency to convert from
   -v, --verbose
-  -a, --amt <AMT>    Amount to convert
-  -t, --to <TO>      Currency to convert to (can be specified multiple times)
-  -h, --help         Print help
+  -a, --amt <AMT>          Amount to convert
+  -t, --to <TO>            Currency to convert to (can be specified multiple times)
+      --endpoint <ENDPOINT> Override the currency API endpoint URL
+  -h, --help               Print help
 
 ```
 
-**Example**: `lifestuff currency --from USD --amt 100 --to EUR --to GBP --to JPY`
+**Examples**: 
+```bash
+# Basic currency conversion
+lifestuff currency --from USD --amt 100 --to EUR --to GBP --to JPY
+
+# Override the API endpoint for a one-off command
+lifestuff currency --endpoint https://example.com --from USD --amt 100 --to EUR
+```
+
+**Configuration**:
+- Default host: `http://localhost:8787` (local development)
+- Override per command with `--endpoint <URL>`
+- Set `LIFESTUFF_API_ENDPOINT` for a persistent override (takes effect when `--endpoint` is omitted)
+- All monetary values in respective currency units
 
 ### Mileage
 
@@ -162,6 +177,81 @@ Options:
   -h, --help               Print help
 
 ```
+
+### Mortgage
+
+Comprehensive mortgage tracking and management system that integrates with a Cloudflare Workers backend. Track payments, view status, and monitor interest postings.
+
+```
+Mortgage Management
+
+Usage: lifestuff mortgage [OPTIONS] <COMMAND>
+
+Commands:
+  payment           Record a mortgage payment
+  status            Get current mortgage status
+  history           Get payment history
+  interest-history  Get interest posting history
+  interest          Add an interest posting
+  help              Print this message or the help of the given subcommand(s)
+
+Options:
+      --endpoint <ENDPOINT>            Override the mortgage API endpoint URL
+  -v, --verbose
+  -h, --help                           Print help
+```
+
+**Payment Command Options**:
+
+The `payment` subcommand supports flexible payment recording:
+
+- `--default` / `-D`: Use mortgage's default monthly payment
+- `--monthly` / `-m`: Specify custom monthly payment amount (conflicts with `--default`)
+- `--overpayment` / `-o`: Add overpayment on top of monthly payment
+- If neither `--default` nor `--monthly` is specified, monthly payment defaults to 0 (pure overpayment)
+
+**Examples**:
+
+```bash
+# Record default monthly payment
+lifestuff mortgage payment --default --date "01/02/2024"
+
+# Record default monthly payment with overpayment
+lifestuff mortgage payment --default --overpayment 500 --date "01/02/2024"
+
+# Record overpayment only (no monthly payment)
+lifestuff mortgage payment --overpayment 500 --date "01/02/2024"
+
+# Record custom monthly payment with overpayment
+lifestuff mortgage payment --monthly 1200 --overpayment 500 --date "01/02/2024" \
+  --note "Extra payment"
+
+# Record custom monthly payment only
+lifestuff mortgage payment --monthly 1200 --date "01/02/2024"
+
+# Check mortgage status
+lifestuff mortgage status
+
+# View payment history
+lifestuff mortgage history
+
+# View interest history
+lifestuff mortgage interest-history
+
+# Add an interest posting
+lifestuff mortgage interest --amount 50 --date "01/01/2024" \
+  --note "Monthly interest"
+
+# Override the API endpoint for a one-off command
+lifestuff mortgage --endpoint https://example.com status
+```
+
+**Configuration**:
+- Default host: `http://localhost:8787` (local development)
+- Override per command with `--endpoint <URL>`
+- Set `LIFESTUFF_API_ENDPOINT` for a persistent override (takes effect when `--endpoint` is omitted)
+- All monetary values in dollars
+- Dates in DD/MM/YYYY format
 
 ### DuckDuckGo (DDG)
 

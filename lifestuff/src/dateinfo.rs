@@ -19,9 +19,9 @@ pub fn handle_date_operations(date_args: DateOperations, verbose: bool) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
-    use lifestuff_types::dateinfo::{DateOperations, DateOption};
-    use lifestuff_types::dateinfo::diff::{Diff, DateDuration};
     use lifestuff_types::dateinfo::add::{Add, TimePeriod};
+    use lifestuff_types::dateinfo::diff::{DateDuration, Diff};
+    use lifestuff_types::dateinfo::{DateOperations, DateOption};
 
     #[test]
     fn test_handle_date_operations_diff() {

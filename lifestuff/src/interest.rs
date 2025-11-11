@@ -61,6 +61,7 @@ pub fn handle_interest_calculations(interest_args: Interest, verbose: bool) -> R
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn calculate_interest_data_for_period(
     start_date: &DateTimeKeeper,
     end_date: &DateTimeKeeper,
