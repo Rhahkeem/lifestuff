@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod currency_tests {
-    use super::super::{get_base_url, DEFAULT_API_HOST, ENV_VAR_NAME};
+    use super::super::{DEFAULT_API_HOST, ENV_VAR_NAME, get_base_url};
     use mockito::Server;
+    use serial_test::serial;
 
     #[test]
     fn test_handle_currency_operations_valid() {
@@ -20,7 +21,7 @@ mod currency_tests {
             endpoint: Some(server.url()),
         };
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "Valid currency conversion should succeed");
         mock.assert();
     }
 
@@ -33,7 +34,7 @@ mod currency_tests {
             endpoint: None,
         };
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_err());
+        assert!(result.is_err(), "Invalid source currency should fail");
     }
 
     #[test]
@@ -45,7 +46,7 @@ mod currency_tests {
             endpoint: None,
         };
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_err());
+        assert!(result.is_err(), "Invalid target currency should fail");
     }
 
     #[test]
@@ -65,7 +66,7 @@ mod currency_tests {
             endpoint: Some(server.url()),
         };
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "Zero amount conversion should succeed");
         mock.assert();
     }
 
@@ -86,7 +87,7 @@ mod currency_tests {
             endpoint: Some(server.url()),
         };
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "Negative amount conversion should succeed");
         mock.assert();
     }
 
@@ -112,25 +113,32 @@ mod currency_tests {
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_cli_arg_priority_over_env() {
-        // Set environment variable
-        std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        }
 
-        // CLI arg should take precedence
         let url = get_base_url(Some("https://cli.example.com".to_string()));
         assert_eq!(
             url, "https://cli.example.com",
             "CLI argument should override environment variable"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_env_var_fallback() {
-        // Ensure no CLI arg
-        std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        }
 
         let url = get_base_url(None);
         assert_eq!(
@@ -138,13 +146,19 @@ mod currency_tests {
             "Should use environment variable when no CLI arg"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_ignores_empty_env_var() {
-        std::env::set_var(ENV_VAR_NAME, "");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "");
+        }
 
         let url = get_base_url(None);
         assert_eq!(
@@ -152,8 +166,10 @@ mod currency_tests {
             "Should use localhost default when env var is empty"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]
@@ -184,8 +200,10 @@ mod currency_tests {
         // the URL normalization happens by checking verbose output or error messages
         let result = crate::currency::handle_currency_operations(currency_args, false);
 
-        // Should fail to connect (no server), but the important part is it tried HTTPS
-        assert!(result.is_err());
+        assert!(
+            result.is_err(),
+            "Should fail to connect (no server), but the important part is it tried HTTPS"
+        );
     }
 
     #[test]
@@ -197,9 +215,8 @@ mod currency_tests {
             endpoint: Some("api.example.com".to_string()),
         };
 
-        // Should fail to connect but attempt HTTPS
         let result = crate::currency::handle_currency_operations(currency_args, false);
-        assert!(result.is_err());
+        assert!(result.is_err(), "Should fail to connect but attempt HTTPS");
     }
 
     #[test]

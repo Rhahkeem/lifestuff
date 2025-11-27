@@ -1,5 +1,5 @@
 use crate::http_utils;
-use anyhow::{ensure, Context, Result};
+use anyhow::{Context, Result, ensure};
 mod tests;
 
 use lifestuff_types::currency::Currency;
@@ -58,7 +58,7 @@ pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Res
         println!("target url = {target_url}");
     }
 
-    let is_localhost = normalized_url.contains("localhost") || normalized_url.contains("127.0.0.1");
+    let is_localhost = http_utils::is_localhost_url(&normalized_url);
     let mut client_builder = reqwest::blocking::Client::builder().timeout(Duration::from_secs(5));
     if !is_localhost {
         client_builder = client_builder.https_only(true);

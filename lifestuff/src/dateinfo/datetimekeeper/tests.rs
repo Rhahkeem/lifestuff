@@ -5,8 +5,8 @@ fn get_31_jan_2023() -> DateTimeKeeper {
 }
 
 mod datetimekeeper_tests {
-    use crate::dateinfo::{datetimekeeper::tests::get_31_jan_2023, DateTimeKeeper};
-    use time::{macros::date, Date};
+    use crate::dateinfo::{DateTimeKeeper, datetimekeeper::tests::get_31_jan_2023};
+    use time::{Date, macros::date};
 
     #[test]
     fn test_new_from_dmy() {

@@ -61,10 +61,12 @@ mod interest_tests {
         let result = crate::interest::handle_interest_calculations(interest_args, false);
         assert!(result.is_err());
         // Verify the error message contains expected validation text
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("positive principal"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("positive principal")
+        );
     }
 
     #[test]
@@ -81,9 +83,11 @@ mod interest_tests {
         let result = crate::interest::handle_interest_calculations(interest_args, false);
         assert!(result.is_err());
         // Verify the error message contains expected validation text
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("positive principal"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("positive principal")
+        );
     }
 }

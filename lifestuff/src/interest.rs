@@ -1,9 +1,9 @@
 mod tests;
 
-use crate::dateinfo::{get_date_from_string_arg, DateTimeKeeper};
-use anyhow::{ensure, Ok, Result};
+use crate::dateinfo::{DateTimeKeeper, get_date_from_string_arg};
+use anyhow::{Ok, Result, ensure};
 use lifestuff_types::interest::Interest;
-use time::{util, Date, Month};
+use time::{Date, Month, util};
 
 fn get_start_of_next_month(verbose: bool) -> Result<DateTimeKeeper> {
     let target_date = get_date_from_string_arg(None, verbose)?;
@@ -131,6 +131,7 @@ fn calculate_interest_data_for_period(
 
     println!(
         "Current date is {:?}, Principal is now : {principal}, Total paid is {total_paid}. {:.2} paid in interest",
-        current_date, total_paid - (original_principal - principal)
+        current_date,
+        total_paid - (original_principal - principal)
     );
 }

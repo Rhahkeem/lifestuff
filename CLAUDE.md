@@ -168,6 +168,7 @@ The completion generation process:
 - `colored` (v2): Terminal output coloring
 - `strum`: Enum utilities and string conversions
 - `regex` (v1): Pattern matching
+- `url` (v2.5): URL parsing and validation for API endpoints
 
 **Build Dependencies:**
 
@@ -177,6 +178,7 @@ The completion generation process:
 
 - `dotenv`: Environment variable loading for testing
 - `mockito`: HTTP mocking for tests
+- `serial_test` (v3.2): Sequential test execution for env var tests
 
 ## Usage Patterns
 
@@ -269,11 +271,25 @@ The project includes comprehensive tests for each module, with mocking support f
 
 ## Technical Notes
 
+### Rust Edition
+
+This project uses **Rust 2024 edition**, which includes:
+
+- `std::env::set_var` and `std::env::remove_var` are `unsafe` functions
+- Tests that modify environment variables use `#[serial]` from `serial_test` crate
+- Proper `unsafe` blocks with SAFETY comments for env var modifications
+
 ### Error Handling Strategy
 
 - Uses `anyhow::Result<()>` for consistent error propagation
 - Errors are displayed to users in a friendly format
 - Verbose mode provides additional debugging information
+
+### URL Handling
+
+- Uses the `url` crate for proper URL parsing and validation
+- Localhost detection uses proper host parsing instead of string matching
+- HTTPS enforcement for non-localhost endpoints
 
 ### External API Integration
 

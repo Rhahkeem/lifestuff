@@ -13,7 +13,7 @@ const ENV_VAR_NAME: &str = "LIFESTUFF_API_ENDPOINT";
 
 /// For non-localhost endpoints, HTTPS-only mode is enforced
 fn create_client(base_url: &str) -> Result<reqwest::blocking::Client> {
-    let is_localhost = base_url.contains("localhost") || base_url.contains("127.0.0.1");
+    let is_localhost = http_utils::is_localhost_url(base_url);
 
     let mut builder = reqwest::blocking::Client::builder().timeout(Duration::from_secs(10));
 
@@ -408,6 +408,7 @@ pub fn handle_mortgage_operations(command: MortgageCommand, verbose: bool) -> Re
 mod tests {
     use super::*;
     use serde::Deserialize;
+    use serial_test::serial;
 
     #[test]
     fn test_parse_api_result_successful_response() {
@@ -531,25 +532,32 @@ mod tests {
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_cli_arg_priority_over_env() {
-        // Set environment variable
-        std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        }
 
-        // CLI arg should take precedence
         let url = get_base_url(Some("https://cli.example.com".to_string()));
         assert_eq!(
             url, "https://cli.example.com",
             "CLI argument should override environment variable"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_env_var_fallback() {
-        // Ensure no CLI arg
-        std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
+        }
 
         let url = get_base_url(None);
         assert_eq!(
@@ -557,13 +565,19 @@ mod tests {
             "Should use environment variable when no CLI arg"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_ignores_empty_env_var() {
-        std::env::set_var(ENV_VAR_NAME, "");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var(ENV_VAR_NAME, "");
+        }
 
         let url = get_base_url(None);
         assert_eq!(
@@ -571,8 +585,10 @@ mod tests {
             "Should use localhost default when env var is empty"
         );
 
-        // Clean up
-        std::env::remove_var(ENV_VAR_NAME);
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var(ENV_VAR_NAME);
+        }
     }
 
     #[test]

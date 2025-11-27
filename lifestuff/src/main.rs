@@ -8,7 +8,7 @@ mod mileage;
 mod mortgage;
 
 use anyhow::Result;
-use lifestuff_types::{parse, Commands};
+use lifestuff_types::{Commands, parse};
 
 fn main() -> Result<()> {
     let cli = parse();
@@ -76,10 +76,12 @@ mod tests {
 
         let result = interest::handle_interest_calculations(invalid_interest, false);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("positive principal"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("positive principal")
+        );
     }
 
     #[test]
