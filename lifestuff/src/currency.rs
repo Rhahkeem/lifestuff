@@ -26,10 +26,10 @@ pub(super) fn get_base_url(cli_endpoint: Option<String>) -> String {
     }
 
     // Second priority: environment variable
-    if let Ok(endpoint) = std::env::var(ENV_VAR_NAME) {
-        if !endpoint.is_empty() {
-            return endpoint;
-        }
+    if let Ok(endpoint) = std::env::var(ENV_VAR_NAME)
+        && !endpoint.is_empty()
+    {
+        return endpoint;
     }
 
     // Final fallback: localhost for development

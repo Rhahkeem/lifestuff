@@ -46,14 +46,14 @@ where
         anyhow::bail!("API Error: {}", error_msg);
     } else {
         let api_response: Result<ApiResponse<Value>, _> = serde_json::from_str(body);
-        if let Ok(resp) = api_response {
-            if !resp.success {
-                let error_msg = resp
-                    .error
-                    .or(resp.message)
-                    .unwrap_or_else(|| "Unknown error".to_string());
-                anyhow::bail!("API Error: {}", error_msg);
-            }
+        if let Ok(resp) = api_response
+            && !resp.success
+        {
+            let error_msg = resp
+                .error
+                .or(resp.message)
+                .unwrap_or_else(|| "Unknown error".to_string());
+            anyhow::bail!("API Error: {}", error_msg);
         }
 
         anyhow::bail!("Request failed with status {}: {}", status, body);
@@ -68,10 +68,10 @@ fn get_base_url(cli_endpoint: Option<String>) -> String {
     }
 
     // Second priority: environment variable
-    if let Ok(endpoint) = std::env::var(ENV_VAR_NAME) {
-        if !endpoint.is_empty() {
-            return endpoint;
-        }
+    if let Ok(endpoint) = std::env::var(ENV_VAR_NAME)
+        && !endpoint.is_empty()
+    {
+        return endpoint;
     }
 
     // Final fallback: localhost for development
