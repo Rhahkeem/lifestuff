@@ -97,15 +97,6 @@ pub struct InterestPostingRequest {
 
 // Response types
 
-/// Wrapper for API responses
-#[derive(Debug, Deserialize)]
-pub struct ApiResponse<T> {
-    pub success: bool,
-    pub data: Option<T>,
-    pub error: Option<String>,
-    pub message: Option<String>,
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct MortgageSummary {
     pub id: Option<i64>,

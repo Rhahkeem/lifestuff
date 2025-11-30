@@ -1,6 +1,10 @@
 use anyhow::{Context, Result};
-use lifestuff_types::mortgage::*;
+use lifestuff_types::mortgage::{
+    InterestPosting, InterestPostingArgs, InterestPostingRequest, MortgageCommand,
+    MortgageOperation, MortgageSummary, PaymentArgs, PaymentRecord, PaymentRequest,
+};
 use reqwest::StatusCode;
+use serde::Deserialize;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::fs;
@@ -10,6 +14,16 @@ use crate::http_utils;
 
 const DEFAULT_MORTGAGE_HOST: &str = "http://localhost:8787";
 const ENV_VAR_NAME: &str = "LIFESTUFF_API_ENDPOINT";
+
+/// Internal wire format for API responses.
+/// This is kept private to avoid exposing transport details in the public API.
+#[derive(Debug, Deserialize)]
+struct ApiResponse<T> {
+    success: bool,
+    data: Option<T>,
+    error: Option<String>,
+    message: Option<String>,
+}
 
 /// For non-localhost endpoints, HTTPS-only mode is enforced
 fn create_client(base_url: &str) -> Result<reqwest::blocking::Client> {
