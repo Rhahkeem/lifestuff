@@ -53,6 +53,7 @@ pub fn is_valid_email_address(email: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serial_test::serial;
 
     #[test]
     fn test_valid_email() {
@@ -87,31 +88,44 @@ mod tests {
         // This test would require mocking the HTTP client, so we'll skip the actual call
         // but test that the function signature works
         use lifestuff_types::ddg::{DDGOperations, DDGOption};
-        
+
         let _ddg_ops = DDGOperations {
             operation_type: DDGOption::Generate,
         };
-        
+
         // We can't easily test this without mocking the HTTP client
-        // but we can verify the function exists and has the right signature
-        assert!(true); // Placeholder test
+        // This test verifies the struct can be instantiated
     }
 
     #[test]
+    #[serial]
     fn test_create_client_missing_env_var() {
-        // Remove DDG_BEARER if it exists for this test
-        std::env::remove_var("DDG_BEARER");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::remove_var("DDG_BEARER");
+        }
         let result = create_client();
-        assert!(result.is_err());
+        assert!(
+            result.is_err(),
+            "Should fail when DDG_BEARER env var is missing"
+        );
     }
 
     #[test]
+    #[serial]
     fn test_create_client_with_env_var() {
-        // Set a test bearer token
-        std::env::set_var("DDG_BEARER", "test_token");
+        // SAFETY: This test runs serially via #[serial] to avoid data races
+        unsafe {
+            std::env::set_var("DDG_BEARER", "test_token");
+        }
         let result = create_client();
-        // Clean up
-        std::env::remove_var("DDG_BEARER");
-        assert!(result.is_ok());
+        // SAFETY: Cleanup, also runs serially
+        unsafe {
+            std::env::remove_var("DDG_BEARER");
+        }
+        assert!(
+            result.is_ok(),
+            "Should succeed when DDG_BEARER env var is set"
+        );
     }
 }

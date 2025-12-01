@@ -1,107 +1,5 @@
 use lifestuff_types::conversions::distance::DistanceUnits;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use lifestuff_types::conversions::distance::DistanceUnits;
-
-    #[test]
-    fn test_distance_conversion_yards_to_inches() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Inches, &1.0);
-        assert_eq!(result, 36.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_yards_to_kilometres() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Kilometres, &1000.0);
-        assert!((result - 0.9144).abs() < 0.0001);
-    }
-
-    #[test]
-    fn test_distance_conversion_yards_to_metres() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Metres, &1.0);
-        assert!((result - 0.9144).abs() < 0.0001);
-    }
-
-    #[test]
-    fn test_distance_conversion_yards_to_miles() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Miles, &1760.0);
-        assert!((result - 1.0).abs() < 0.0001);
-    }
-
-    #[test]
-    fn test_distance_conversion_yards_to_feet() {
-        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Feet, &1.0);
-        assert_eq!(result, 3.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_inches_to_yards() {
-        let result = distance_conversions(&DistanceUnits::Inches, &DistanceUnits::Yards, &36.0);
-        assert_eq!(result, 1.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_inches_to_feet() {
-        let result = distance_conversions(&DistanceUnits::Inches, &DistanceUnits::Feet, &12.0);
-        assert_eq!(result, 1.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_kilometres_to_metres() {
-        let result = distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Metres, &1.0);
-        assert_eq!(result, 1000.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_kilometres_to_miles() {
-        let result = distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Miles, &1.609344);
-        assert!((result - 1.0).abs() < 0.0001);
-    }
-
-    #[test]
-    fn test_distance_conversion_metres_to_feet() {
-        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Feet, &1.0);
-        assert!((result - 3.280839895).abs() < 0.0001);
-    }
-
-    #[test]
-    fn test_distance_conversion_miles_to_yards() {
-        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Yards, &1.0);
-        assert_eq!(result, 1760.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_miles_to_feet() {
-        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Feet, &1.0);
-        assert_eq!(result, 5280.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_feet_to_inches() {
-        let result = distance_conversions(&DistanceUnits::Feet, &DistanceUnits::Inches, &1.0);
-        assert_eq!(result, 12.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_same_unit() {
-        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Metres, &5.0);
-        assert_eq!(result, 5.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_zero_value() {
-        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Kilometres, &0.0);
-        assert_eq!(result, 0.0);
-    }
-
-    #[test]
-    fn test_distance_conversion_negative_value() {
-        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Feet, &-10.0);
-        assert!((result + 32.80839895).abs() < 0.0001);
-    }
-}
-
 pub fn distance_conversions(from: &DistanceUnits, to: &DistanceUnits, val: &f64) -> f64 {
     match &from {
         DistanceUnits::Yards => match &to {
@@ -152,5 +50,109 @@ pub fn distance_conversions(from: &DistanceUnits, to: &DistanceUnits, val: &f64)
             DistanceUnits::Miles => val / 5280.0,
             DistanceUnits::Feet => val.to_owned(),
         },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lifestuff_types::conversions::distance::DistanceUnits;
+
+    #[test]
+    fn test_distance_conversion_yards_to_inches() {
+        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Inches, &1.0);
+        assert_eq!(result, 36.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_yards_to_kilometres() {
+        let result =
+            distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Kilometres, &1000.0);
+        assert!((result - 0.9144).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_distance_conversion_yards_to_metres() {
+        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Metres, &1.0);
+        assert!((result - 0.9144).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_distance_conversion_yards_to_miles() {
+        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Miles, &1760.0);
+        assert!((result - 1.0).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_distance_conversion_yards_to_feet() {
+        let result = distance_conversions(&DistanceUnits::Yards, &DistanceUnits::Feet, &1.0);
+        assert_eq!(result, 3.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_inches_to_yards() {
+        let result = distance_conversions(&DistanceUnits::Inches, &DistanceUnits::Yards, &36.0);
+        assert_eq!(result, 1.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_inches_to_feet() {
+        let result = distance_conversions(&DistanceUnits::Inches, &DistanceUnits::Feet, &12.0);
+        assert_eq!(result, 1.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_kilometres_to_metres() {
+        let result = distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Metres, &1.0);
+        assert_eq!(result, 1000.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_kilometres_to_miles() {
+        let result =
+            distance_conversions(&DistanceUnits::Kilometres, &DistanceUnits::Miles, &1.609344);
+        assert!((result - 1.0).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_distance_conversion_metres_to_feet() {
+        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Feet, &1.0);
+        assert!((result - 3.280839895).abs() < 0.0001);
+    }
+
+    #[test]
+    fn test_distance_conversion_miles_to_yards() {
+        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Yards, &1.0);
+        assert_eq!(result, 1760.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_miles_to_feet() {
+        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Feet, &1.0);
+        assert_eq!(result, 5280.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_feet_to_inches() {
+        let result = distance_conversions(&DistanceUnits::Feet, &DistanceUnits::Inches, &1.0);
+        assert_eq!(result, 12.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_same_unit() {
+        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Metres, &5.0);
+        assert_eq!(result, 5.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_zero_value() {
+        let result = distance_conversions(&DistanceUnits::Miles, &DistanceUnits::Kilometres, &0.0);
+        assert_eq!(result, 0.0);
+    }
+
+    #[test]
+    fn test_distance_conversion_negative_value() {
+        let result = distance_conversions(&DistanceUnits::Metres, &DistanceUnits::Feet, &-10.0);
+        assert!((result + 32.80839895).abs() < 0.0001);
     }
 }

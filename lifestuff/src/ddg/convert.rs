@@ -1,6 +1,6 @@
 use crate::ddg::generate::generate_ddg_address;
 use crate::ddg::is_valid_email_address;
-use anyhow::{ensure, Result};
+use anyhow::{Result, ensure};
 use colored::Colorize;
 use lifestuff_types::ddg::convert::DDGConvert;
 use reqwest::blocking::Client;

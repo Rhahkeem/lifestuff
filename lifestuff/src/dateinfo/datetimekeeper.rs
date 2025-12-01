@@ -1,4 +1,4 @@
-use anyhow::{ensure, Context, Error, Result};
+use anyhow::{Context, Error, Result, ensure};
 use std::fmt;
 use std::ops::{Add, AddAssign, Sub};
 use time::macros::format_description;
@@ -32,7 +32,7 @@ fn parse_input_date_yyyymmdd(input: &str, verbose: bool) -> Result<(u32, u8, u8)
 
 fn parse_input_date_dmy(input: &str, verbose: bool) -> Result<(u32, u8, u8), Error> {
     ensure!(
-        input.contains(['-','/']) && !(input.contains('/') && input.contains('-')) ,
+        input.contains(['-', '/']) && !(input.contains('/') && input.contains('-')),
         "Error handling date parsing. Expected delimiter format `-` or `/`. e.g dd/mm/yy or dd-mm-yyyy"
     );
 
@@ -223,7 +223,10 @@ impl DateTimeKeeper {
         minute: Option<u8>,
         second: Option<u8>,
     ) -> Result<()> {
-        ensure!(hour.is_some() || minute.is_some() || second.is_some(), "Invalid options passed for update time. Specify at least one of hour, minute or second");
+        ensure!(
+            hour.is_some() || minute.is_some() || second.is_some(),
+            "Invalid options passed for update time. Specify at least one of hour, minute or second"
+        );
 
         let interim = self
             .utc_date_time

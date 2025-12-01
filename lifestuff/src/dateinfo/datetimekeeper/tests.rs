@@ -1,13 +1,12 @@
 use super::DateTimeKeeper;
 #[cfg(test)]
-
 fn get_31_jan_2023() -> DateTimeKeeper {
     DateTimeKeeper::new_from_dmy_str("31 / 1/ 2023", false).unwrap()
 }
 
-mod tests {
-    use crate::dateinfo::{datetimekeeper::tests::get_31_jan_2023, DateTimeKeeper};
-    use time::{macros::date, Date};
+mod datetimekeeper_tests {
+    use crate::dateinfo::{DateTimeKeeper, datetimekeeper::tests::get_31_jan_2023};
+    use time::{Date, macros::date};
 
     #[test]
     fn test_new_from_dmy() {
@@ -153,11 +152,11 @@ mod tests {
         let mut tester = get_31_jan_2023();
         let result_date = date!(2023 - 1 - 1);
 
-        let test_result2 = tester.set_day(01);
+        let test_result2 = tester.set_day(1);
         assert!(test_result2.is_ok());
         assert_eq!(tester.date(), result_date);
 
-        let test_result3 = tester.set_day(001);
+        let test_result3 = tester.set_day(1);
         assert!(test_result3.is_ok());
         assert_eq!(tester.date(), result_date);
 

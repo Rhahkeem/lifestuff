@@ -40,7 +40,7 @@ pub fn do_diff_date(diff_args: &Diff, verbose: bool) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use lifestuff_types::dateinfo::diff::{Diff, DateDuration};
+    use lifestuff_types::dateinfo::diff::{DateDuration, Diff};
 
     #[test]
     fn test_do_output_format_singular() {

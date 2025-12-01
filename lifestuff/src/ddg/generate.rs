@@ -1,6 +1,6 @@
-use anyhow::{ensure, Context, Result};
-use reqwest::blocking::Client;
+use anyhow::{Context, Result, ensure};
 use reqwest::StatusCode;
+use reqwest::blocking::Client;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
