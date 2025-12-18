@@ -75,6 +75,7 @@ pub fn handle_currency_operations(currency_args: Currency, verbose: bool) -> Res
 
     let response = client
         .post(target_url)
+        .headers(http_utils::build_request_headers(&normalized_url))
         .json(&json_body_map)
         .send()
         .context("Unable to send request to get currency exchange rate")?;
