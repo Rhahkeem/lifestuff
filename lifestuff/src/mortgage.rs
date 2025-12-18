@@ -170,6 +170,7 @@ fn handle_payment(args: PaymentArgs, base_url: &str, verbose: bool) -> Result<()
 
     let response = client
         .post(&url)
+        .headers(http_utils::build_request_headers(base_url))
         .json(&request_body)
         .send()
         .context("Failed to send payment request")?;
@@ -205,6 +206,7 @@ fn handle_status(base_url: &str, verbose: bool) -> Result<()> {
 
     let response = client
         .get(&url)
+        .headers(http_utils::build_request_headers(base_url))
         .send()
         .context("Failed to send status request")?;
 
@@ -248,6 +250,7 @@ fn handle_history(base_url: &str, verbose: bool) -> Result<()> {
 
     let response = client
         .get(&url)
+        .headers(http_utils::build_request_headers(base_url))
         .send()
         .context("Failed to send history request")?;
 
@@ -312,6 +315,7 @@ fn handle_interest_history(base_url: &str, verbose: bool) -> Result<()> {
 
     let response = client
         .get(&url)
+        .headers(http_utils::build_request_headers(base_url))
         .send()
         .context("Failed to send interest history request")?;
 
@@ -376,6 +380,7 @@ fn handle_interest_posting(args: InterestPostingArgs, base_url: &str, verbose: b
 
     let response = client
         .post(&url)
+        .headers(http_utils::build_request_headers(base_url))
         .json(&request_body)
         .send()
         .context("Failed to send interest posting request")?;

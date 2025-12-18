@@ -132,6 +132,7 @@ Comprehensive mortgage tracking and management with:
   1. `--endpoint` CLI flag (explicit override)
   2. `LIFESTUFF_API_ENDPOINT` environment variable (secure default)
   3. `http://localhost:8787` (development fallback)
+- API key authentication via `LIFESTUFF_API_KEY` environment variable
 - Integrates with Cloudflare Workers backend for persistent storage
 
 ### 7. DuckDuckGo Email Utilities (`ddg`)
@@ -296,6 +297,17 @@ This project uses **Rust 2024 edition**, which includes:
 - Currency conversion uses real-time exchange rate APIs
 - HTTP requests are handled synchronously with `reqwest::blocking`
 - Includes proper error handling for network failures
+
+### API Authentication
+
+The CLI supports API key authentication for secure communication with backend services:
+
+- **Environment Variable**: `LIFESTUFF_API_KEY`
+- **Header**: Sent as `X-API-Key` header on all API requests
+- **Behavior**:
+  - For localhost endpoints: API key is optional (development convenience)
+  - For remote endpoints: Warning printed if API key is not set
+  - Empty environment variable is treated as unset
 
 ### Shell Integration
 

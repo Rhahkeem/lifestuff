@@ -15,6 +15,7 @@ To install simply run `cargo install --path .` from the `lifestuff/` directory.
 ## Shell Completions
 
 Zsh completions are automatically generated during the build process using the `build.rs` script. The completion file `_lifestuff` is placed in:
+
 - `$RUST_COMPLETION_DIR` (if set)
 - Or `$OUT_DIR/completion/` (build target directory)
 
@@ -47,7 +48,7 @@ Commands:
 
 Options:
   -v, --verbose
-          
+
 
   -h, --help
           Print help (see a summary with '-h')
@@ -100,8 +101,9 @@ Options:
 ### Interest
 
 Comprehensive mortgage and loan calculations with support for:
+
 - Principal tracking
-- Interest rate calculations  
+- Interest rate calculations
 - Monthly payment planning
 - Annual repayment limits (percentage or fixed amount)
 - End date projections
@@ -147,7 +149,8 @@ Options:
 
 ```
 
-**Examples**: 
+**Examples**:
+
 ```bash
 # Basic currency conversion
 lifestuff currency --from USD --amt 100 --to EUR --to GBP --to JPY
@@ -157,9 +160,11 @@ lifestuff currency --endpoint https://example.com --from USD --amt 100 --to EUR
 ```
 
 **Configuration**:
+
 - Default host: `http://localhost:8787` (local development)
 - Override per command with `--endpoint <URL>`
 - Set `LIFESTUFF_API_ENDPOINT` for a persistent override (takes effect when `--endpoint` is omitted)
+- Set `LIFESTUFF_API_KEY` for API authentication (required for remote endpoints)
 - All monetary values in respective currency units
 
 ### Mileage
@@ -247,11 +252,18 @@ lifestuff mortgage --endpoint https://example.com status
 ```
 
 **Configuration**:
+
 - Default host: `http://localhost:8787` (local development)
 - Override per command with `--endpoint <URL>`
 - Set `LIFESTUFF_API_ENDPOINT` for a persistent override (takes effect when `--endpoint` is omitted)
 - All monetary values in dollars
 - Dates in DD/MM/YYYY format
+
+**Authentication**:
+
+- Set `LIFESTUFF_API_KEY` environment variable for API authentication
+- Required for remote endpoints; optional for localhost (development)
+- The key is sent via the `X-API-Key` header
 
 ### DuckDuckGo (DDG)
 
@@ -268,13 +280,14 @@ Commands:
   help      Print this message or the help of the given subcommand(s)
 
 Options:
-  -v, --verbose  
+  -v, --verbose
   -h, --help     Print help
 ```
 
 ## Project Structure
 
 This is a Rust workspace with two crates:
+
 - `lifestuff/`: Main binary crate with command implementations
 - `lifestuff-types/`: Shared types and CLI argument definitions
 
