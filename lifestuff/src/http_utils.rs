@@ -69,7 +69,8 @@ pub(crate) fn build_request_headers(base_url: &str) -> HeaderMap {
     headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
 
     if let Some(api_key) = get_api_key() {
-        if let Ok(value) = HeaderValue::from_str(&api_key) {
+        if let Ok(mut value) = HeaderValue::from_str(&api_key) {
+            value.set_sensitive(true);
             headers.insert(API_KEY_HEADER, value);
         }
     } else if !is_localhost_url(base_url) {
