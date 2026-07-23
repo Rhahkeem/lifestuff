@@ -78,7 +78,7 @@ mod tests {
             generate: true,
             sender: None,
         };
-        let target_url = format!("{}/api/email/addresses", &s.url());
+        let target_url = format!("{}/api/email/addresses", s.url());
 
         assert!(perform_address_conversion(&args, false, &target_url, client).is_ok());
     }
