@@ -1,4 +1,5 @@
 use anyhow::{Context, Result, ensure};
+use lifestuff_types::ddg::convert::validate_sender;
 use reqwest::StatusCode;
 use reqwest::blocking::Client;
 use serde::Deserialize;
@@ -16,7 +17,7 @@ impl std::fmt::Display for DDGAddress {
 
 pub fn handle_generate_ddg_address(verbose: bool, url: &str, client: Client) -> Result<()> {
     let ddg_address = generate_ddg_address(verbose, url, client)?;
-    println!("New address to use is \"{ddg_address}@duck.com\"");
+    println!("New address to use is \"{ddg_address}\"");
 
     Ok(())
 }
@@ -41,12 +42,87 @@ pub fn generate_ddg_address(verbose: bool, url: &str, client: Client) -> Result<
     }
 
     let ddg_email: DDGAddress = serde_json::from_str(response_body.as_str())?;
-    Ok(ddg_email.address)
+    normalize_generated_address(&ddg_email.address)
+        .context("DDG API returned an invalid generated sender")
+}
+
+fn normalize_generated_address(address: &str) -> Result<String> {
+    let address = address.trim();
+    if address.contains('@') {
+        validate_sender(address)
+    } else {
+        validate_sender(&format!("{address}@duck.com"))
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn api_response_is_normalized_to_one_full_sender_address() {
+        let mut server = mockito::Server::new();
+        for address in ["generated-alias", "generated-alias@duck.com"] {
+            let mock = server
+                .mock("POST", "/api/email/addresses")
+                .with_status(201)
+                .with_body(serde_json::json!({ "address": address }).to_string())
+                .expect(1)
+                .create();
+            let result = generate_ddg_address(
+                false,
+                &format!("{}/api/email/addresses", server.url()),
+                Client::new(),
+            )
+            .unwrap();
+            assert_eq!(result, "generated-alias@duck.com");
+            mock.assert();
+        }
+    }
+
+    #[test]
+    fn rejects_malformed_generated_addresses() {
+        for address in [
+            "",
+            "  ",
+            "bad alias",
+            "alias@gmail.com",
+            "alias@duck.com extra",
+            "alias@duck.com@duck.com",
+        ] {
+            assert!(
+                normalize_generated_address(address).is_err(),
+                "should reject {address}"
+            );
+        }
+    }
+
+    #[test]
+    fn rejects_failed_or_malformed_api_responses() {
+        let mut server = mockito::Server::new();
+        for (status, body) in [
+            (429, "{}"),
+            (201, "not json"),
+            (201, "{}"),
+            (201, r#"{"address":"bad@gmail.com"}"#),
+        ] {
+            let mock = server
+                .mock("POST", "/api/email/addresses")
+                .with_status(status)
+                .with_body(body)
+                .expect(1)
+                .create();
+            assert!(
+                generate_ddg_address(
+                    false,
+                    &format!("{}/api/email/addresses", server.url()),
+                    Client::new()
+                )
+                .is_err()
+            );
+            mock.assert();
+        }
+    }
 
     #[test]
     fn test_ddg_address_display() {
