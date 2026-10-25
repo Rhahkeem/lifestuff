@@ -17,7 +17,7 @@ fn main() -> Result<()> {
     if verbose {
         println!("CLI Args: {:?}", cli);
     }
-    let da_answer = match cli.command {
+    match cli.command {
         Commands::Convert(args) => conversions::perform_conversion(args),
         Commands::Dates(args) => dateinfo::handle_date_operations(args, verbose),
         Commands::Interest(args) => interest::handle_interest_calculations(args, verbose),
@@ -25,13 +25,7 @@ fn main() -> Result<()> {
         Commands::Mileage(args) => mileage::handle_mileage_operations(args, verbose),
         Commands::DDG(args) => ddg::handle_ddg_operations(args, verbose),
         Commands::Mortgage(args) => mortgage::handle_mortgage_operations(args, verbose),
-    };
-
-    if let Err(e) = da_answer {
-        println!("{e}");
     }
-
-    Ok(())
 }
 
 #[cfg(test)]
