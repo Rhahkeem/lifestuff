@@ -246,8 +246,10 @@ export LIFESTUFF_API_ENDPOINT="https://api.example.com"
 lifestuff mortgage status  # Uses env var
 
 # DuckDuckGo utilities
+# DDG_BEARER is required only for generation
 lifestuff ddg generate
-lifestuff ddg convert --email "user@example.com"
+lifestuff ddg convert --recipient "user@example.com" --sender "myalias@duck.com"
+# Or set DDG_DEFAULT_SENDER to your @duck.com address and use --use-default
 ```
 
 ## Development
