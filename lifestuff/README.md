@@ -25,6 +25,10 @@ To use completions, copy the generated `_lifestuff` file to a directory in your 
 
 The program provides various utilities for lifestyle calculations and conversions.
 
+Successful commands exit with status 0. Runtime errors are written to stderr and
+exit with status 1; invalid arguments exit with status 2. Scripts can use these
+statuses to detect failures.
+
 ### Global Options
 
 - `--verbose` (`-v`): Enable detailed output for all commands
