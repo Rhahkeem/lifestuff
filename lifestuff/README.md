@@ -284,6 +284,32 @@ Options:
   -h, --help     Print help
 ```
 
+The recipient can use any email provider. The sender must be your full `@duck.com`
+address. Choose exactly one of `--sender`, `--use-default`, or `--generate`.
+
+```bash
+# Convert using your existing DuckDuckGo alias (no bearer token needed)
+lifestuff ddg convert --recipient alice@gmail.com --sender myalias@duck.com
+# Output: Use alice_at_gmail.com_myalias@duck.com to send to alice@gmail.com from myalias@duck.com
+
+# Configure your default sender (no bearer token needed)
+export DDG_DEFAULT_SENDER="myalias@duck.com"
+lifestuff ddg convert --recipient alice@gmail.com --use-default
+
+# Generate an alias, or generate one and use it in a conversion
+# Set DDG_BEARER to your DuckDuckGo Email Protection token first.
+lifestuff ddg generate
+lifestuff ddg convert --recipient alice@gmail.com --generate
+```
+
+**Configuration**:
+
+- `DDG_DEFAULT_SENDER`: Required for `--use-default`; must be a valid `@duck.com`
+  address. Missing, blank, or invalid configuration produces an error.
+- `DDG_BEARER`: Required only for `ddg generate` and `ddg convert --generate`.
+- Surrounding whitespace is trimmed from recipient and sender addresses.
+- Generated aliases are returned as full addresses with one `@duck.com` suffix.
+
 ## Project Structure
 
 This is a Rust workspace with two crates:
