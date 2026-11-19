@@ -7,6 +7,9 @@ mod interest;
 mod mileage;
 mod mortgage;
 
+#[cfg(test)]
+mod test_support;
+
 use anyhow::Result;
 use lifestuff_types::{Commands, parse};
 

@@ -1,8 +1,10 @@
 #[cfg(test)]
 mod currency_tests {
-    use super::super::{DEFAULT_API_HOST, ENV_VAR_NAME, get_base_url};
+    use super::super::{DEFAULT_API_HOST, get_base_url};
     use mockito::Server;
     use serial_test::serial;
+
+    use crate::test_support::ApiEndpointGuard;
 
     #[test]
     fn test_handle_currency_operations_valid() {
@@ -92,7 +94,9 @@ mod currency_tests {
     }
 
     #[test]
+    #[serial]
     fn test_get_base_url_defaults_to_localhost() {
+        let _endpoint = ApiEndpointGuard::new(None);
         let url = get_base_url(None);
         assert_eq!(
             url, DEFAULT_API_HOST,
@@ -115,61 +119,37 @@ mod currency_tests {
     #[test]
     #[serial]
     fn test_get_base_url_cli_arg_priority_over_env() {
-        // SAFETY: This test runs serially via #[serial] to avoid data races
-        unsafe {
-            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
-        }
+        let _endpoint = ApiEndpointGuard::new(Some("https://env.example.com"));
 
         let url = get_base_url(Some("https://cli.example.com".to_string()));
         assert_eq!(
             url, "https://cli.example.com",
             "CLI argument should override environment variable"
         );
-
-        // SAFETY: Cleanup, also runs serially
-        unsafe {
-            std::env::remove_var(ENV_VAR_NAME);
-        }
     }
 
     #[test]
     #[serial]
     fn test_get_base_url_env_var_fallback() {
-        // SAFETY: This test runs serially via #[serial] to avoid data races
-        unsafe {
-            std::env::set_var(ENV_VAR_NAME, "https://env.example.com");
-        }
+        let _endpoint = ApiEndpointGuard::new(Some("https://env.example.com"));
 
         let url = get_base_url(None);
         assert_eq!(
             url, "https://env.example.com",
             "Should use environment variable when no CLI arg"
         );
-
-        // SAFETY: Cleanup, also runs serially
-        unsafe {
-            std::env::remove_var(ENV_VAR_NAME);
-        }
     }
 
     #[test]
     #[serial]
     fn test_get_base_url_ignores_empty_env_var() {
-        // SAFETY: This test runs serially via #[serial] to avoid data races
-        unsafe {
-            std::env::set_var(ENV_VAR_NAME, "");
-        }
+        let _endpoint = ApiEndpointGuard::new(Some(""));
 
         let url = get_base_url(None);
         assert_eq!(
             url, DEFAULT_API_HOST,
             "Should use localhost default when env var is empty"
         );
-
-        // SAFETY: Cleanup, also runs serially
-        unsafe {
-            std::env::remove_var(ENV_VAR_NAME);
-        }
     }
 
     #[test]
